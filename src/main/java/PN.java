@@ -2,6 +2,7 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 class PN {
@@ -9,64 +10,136 @@ class PN {
 	private Array2DRowRealMatrix mMarking;
 
 	enum Transitions {
-		ARRIVAL_RATE_1(0), // arrival_rate
+		ARRIVAL_RATE(0, 20, 50), // arrival_rate h
 
 		// CPU 1
 
-		START_BUFFERS_1(0), // T1
-		POWER_UP_DELAY_1(0), // power_up_delay
-		POWER_DOWN_THRESHOLD_1(1), // power_down_threshold
-		CONSUME_PENDING_TASK_TOKEN_1(2), // T5
-		WAKE_UP_1(3), // T6
-		START_SERVICE_1(4), // T2
-		END_SERVICE_RATE_1(5), // service_rate
+		START_BUFFER_1(7), // T1 h
+		POWER_UP_DELAY_1(4), // power_up_delay h
+		POWER_DOWN_THRESHOLD_1(3), // power_down_threshold h
+		CONSUME_PENDING_TASK_TOKEN_1(11), // T5 h
+		WAKE_UP_1(12), // T6 h
+		START_SERVICE_1(8), // T2 h
+		END_SERVICE_RATE_1(1, 30, 40), // service_rate h
 
 
 		// CPU 2
-		START_BUFFERS_2(0), // T1
-		POWER_UP_DELAY_2(0), // power_up_delay
-		POWER_DOWN_THRESHOLD_2(1), // power_down_threshold
-		CONSUME_PENDING_TASK_TOKEN_2(2), // T5
-		WAKE_UP_2(3), // T6
-		START_SERVICE_2(4), // T2
-		END_SERVICE_RATE_2(5); // service_rate
+		START_BUFFER_2(9), // T1 h
+		POWER_UP_DELAY_2(5), // power_up_delay h
+		POWER_DOWN_THRESHOLD_2(6), // power_down_threshold h
+		CONSUME_PENDING_TASK_TOKEN_2(13), // T5 h
+		WAKE_UP_2(14), // T6 h
+		START_SERVICE_2(10), // T2 h
+		END_SERVICE_RATE_2(2, 20, 25); // service_rate h
 
 		private final int transitionCode;
+		private Integer alfa;
+		private Integer beta;
+		private Date initialTime;
 
 		Transitions(int transitionCode) {
 			this.transitionCode = transitionCode;
+		}
+		/**
+		 * @param alfa  millis
+		 * @param beta  millis
+		 */
+		Transitions(int transitionCode, Integer alfa, Integer beta) {
+			this.transitionCode = transitionCode;
+			this.alfa = alfa;
+			this.beta = beta;
 		}
 
 
 		public int getTransitionCode() {
 			return transitionCode;
 		}
+		public boolean isTemporized() {
+			return (alfa != null && beta != null);
+		}
+
+		public Date getInitialTime() {
+			return initialTime;
+		}
+
+		public void setInitialTime(Date initialTime) {
+			this.initialTime = initialTime;
+		}
+	}
+	enum Places {
+		Buffer1(2),
+		Buffer2(4);
+		int position;
+		Places (int position) {
+			this.position = position;
+		}
+
+		public int getPosition() {
+			return position;
+		}
 	}
 
 	PN() {
-		double[] initialMarking = {0,0,8,0,0,10,15,0,0,5};
+		double[] initialMarking = {1,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0};
 		mMarking = new Array2DRowRealMatrix(initialMarking);
 		double[][] incidenceMatrix = {
-				//Consumir en buffer 1,Consumir en buffer 2,Producir en buffer 1,Producir en buffer 2,T2,T3,T7,T8
-				{-1, 0, 0, 0, 0, 1, 0, 0}, //Buffer 1
-				{0, -1, 0, 0, 1, 0, 0, 0}, //Buffer 2
-				{-1,-1, 0, 0, 0, 0, 1, 1}, //Consumidores
-				{1,  0, 0, 0, 0, 0,-1, 0}, //Consumiendo buffer 1
-				{0,  1, 0, 0, 0, 0, 0,-1}, //Consumiendo buffer 2
-				{0,  0,-1, 0, 0, 0, 1, 0}, //Espacios buffer 1
-				{0,  0, 0,-1, 0, 0, 0, 1}, //Espacios buffer 2
-				{0,  0, 1, 0, 0,-1, 0, 0}, //Produciendo en buffer 1
-				{0,  0, 0, 1,-1, 0, 0, 0}, //Produciendo en buffer 2
-				{0,  0,-1,-1, 1, 1, 0, 0} //Productores
+				//      Arrival_rate        c1-Service_rate     c2-Service_rate     CPU1-Power_down_threshold       CPU1-Power_up_delay     CPU2_power_up_delay     CPU2-Power_down_threshold       StartBuffer1        CPU1-StartService       StartBuffer2        CPU2-StartService       CPU1-ConsumePendingTaskToken        CPU1-WakeUp     CPU2-ConsumePendingTaskToken        CPU2-WakeUp
+				{0,      1,      0,      0,       0,       0,       0,      0,      -1,      0,      0,       0,      0,      0,      0},      //c1-Idle
+				{0,      0,      1,      0,       0,       0,       0,      0,      0,       0,      -1,      0,      0,      0,      0},      //c2-Idle
+				{0,      0,      0,      0,       0,       0,       0,      1,      -1,      0,      0,       0,      0,      0,      0},      //core1_buffer
+				{0,      -1,      0,      0,       0,       0,       0,      0,      1,       0,      0,       0,      0,      0,      0},      //core1-active
+				{0,      0,      0,      0,       0,       0,       0,      0,      0,      1,      -1,      0,      0,      0,      0},      //core2_buffer
+				{0,      0,      -1,      0,       0,       0,       0,      0,      0,      0,      1,       0,      0,      0,      0},      //core2-active
+				{0,      0,      0,      -1,      1,       0,       0,      0,      0,      0,      0,       0,      0,      0,      0},      //CPU1_ON
+				{0,      0,      0,      0,       -1,      0,       0,      0,      0,      0,      0,       0,      1,      0,      0},      //CPU1-Power_up
+				{0,      0,      0,      1,       0,       0,       0,      0,      0,      0,      0,       0,      -1,      0,      0},      //CPU1-Stand_by
+				{0,      0,      0,      0,       0,       1,       -1,      0,      0,      0,      0,       0,      0,      0,      0},      //CPU2_ON
+				{0,      0,      0,      0,       0,       -1,      0,      0,      0,      0,      0,       0,      0,      0,      1},      //CPU2-Power_up
+				{0,      0,      0,      0,       0,       0,       1,      0,      0,      0,      0,       0,      0,      0,      -1},      //CPU2-Stand_by
+				{-1,      0,      0,      0,       0,       0,       0,      1,      0,      1,       0,       0,       0,       0,       0},       //P0
+				{1,       0,      0,      0,       0,       0,       0,       -1,      0,      -1,      0,       0,       0,       0,       0},       //P1
+				{0,       0,      0,      0,       -1,      0,       0,       1,       0,      0,       0,       -1,      0,       0,       0},       //CPU1-PendingTask
+				{0,       0,      0,      0,       0,       -1,      0,       0,       0,      1,       0,       0,       0,       -1,      0}       //CPU2-PendingTask
 		};
 		mIncidenceMatrix = new Array2DRowRealMatrix(incidenceMatrix);
+		initInternalCounters();
 	}
 
 	void fire(Transitions transition) {
+		System.out.println(getMarkingString() + new Date().toString() + transition.toString());
 		mMarking =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
+		initInternalCounters();
 	}
+
+	private void initInternalCounters() {
+		for (Transitions t : getEnabledTransitionsWithoutTime()) {
+			// Si es una transición temporizada y no se inició su contador interno
+			if (t.isTemporized() && t.getInitialTime() == null)  {
+				t.setInitialTime(new Date());
+			}
+		}
+	}
+
+	// WithTime
 	boolean isTransitionEnabled(Transitions transition) {
+		Array2DRowRealMatrix matrix =
+				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
+		for (int i = 0; i<matrix.getRowDimension(); i++) {
+			if (matrix.getRow(i)[0] < 0) return false;
+		}
+		if (transition.isTemporized() && transition.getInitialTime() != null) {
+			long transitionInitialMillis = transition.getInitialTime().getTime();
+			long currentTimeMillis = new Date().getTime();
+
+			if (currentTimeMillis >= transitionInitialMillis + transition.alfa &&
+			    currentTimeMillis <= transitionInitialMillis + transition.beta) {
+				return true;
+			} else return false;
+		}
+		return true;
+	}
+	private boolean isTransitionEnabledWithoutTime(Transitions transition) {
 		Array2DRowRealMatrix matrix =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		for (int i = 0; i<matrix.getRowDimension(); i++) {
@@ -75,17 +148,29 @@ class PN {
 		return true;
 	}
 
+	// withTime
 	List<Transitions> getEnabledTransitions() {
 		List<Transitions> enabledTransitionsList = new ArrayList<>();
 		for (Transitions t : Transitions.values()) {
 			if (isTransitionEnabled(t)) enabledTransitionsList.add(t);
 		}
+		return enabledTransitionsList;
+	}
+	private List<Transitions> getEnabledTransitionsWithoutTime() {
+		List<Transitions> enabledTransitionsList = new ArrayList<>();
+		for (Transitions t : Transitions.values()) {
+			if (isTransitionEnabledWithoutTime(t)) enabledTransitionsList.add(t);
+		}
 
 		return enabledTransitionsList;
 	}
 
+	public int getPlaceTokens(Places p) {
+		return (int) mMarking.getRow(p.getPosition())[0];
+	}
+
 	public String getMarkingString() {
-		System.out.println(Arrays.toString(mMarking.transpose().getData()[0]));
+		//System.out.println(Arrays.toString(mMarking.transpose().getData()[0]));
 		return Arrays.toString(mMarking.transpose().getData()[0]);
 	}
 

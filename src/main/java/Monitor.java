@@ -12,8 +12,8 @@ class Monitor {
 	private final Lock mLock;
 	private final HashMap<PN.Transitions, Condition> conditions = new HashMap<>();
 
-	Monitor() {
-		mPN = new PN();
+	Monitor(PN pn) {
+		mPN = pn;
 
 		mLock = new ReentrantLock(true);
 		// create one condition per transition
