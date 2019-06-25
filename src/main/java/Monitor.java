@@ -27,7 +27,7 @@ class Monitor {
 			for (PN.Transitions t : transitionsExecutableLinkedHashMap.keySet()) {
 				// sleep in queue until condition is met
 				while (!mPN.isTransitionEnabled(t)) {
-					if (!conditions.get(t).await(200, TimeUnit.MILLISECONDS)) return false;
+					if (!conditions.get(t).await(5, TimeUnit.MILLISECONDS)) return false;
 				}
 
 				mPN.fire(t);

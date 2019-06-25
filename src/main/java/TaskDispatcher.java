@@ -24,13 +24,13 @@ class TaskDispatcher extends  Thread {
 
 			if (cpuNumber.equals(TasksManager.CPUNumber.CPU1)) {
 				LinkedHashMap<PN.Transitions, Runnable> startBufferTransition = new LinkedHashMap<>();
-				arrivalRateTransition.put(PN.Transitions.START_BUFFER_1, () -> {});
+				startBufferTransition.put(PN.Transitions.START_BUFFER_1, () -> {});
 
 				while (!mMonitor.fireTransitions(startBufferTransition)) {}
 
 			} else {
 				LinkedHashMap<PN.Transitions, Runnable> startBufferTransition = new LinkedHashMap<>();
-				arrivalRateTransition.put(PN.Transitions.START_BUFFER_2, () -> {});
+				startBufferTransition.put(PN.Transitions.START_BUFFER_2, () -> {});
 
 				while (!mMonitor.fireTransitions(startBufferTransition)) {}
 			}
