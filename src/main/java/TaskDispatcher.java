@@ -4,6 +4,8 @@ class TaskDispatcher extends  Thread {
 	private final PN mPN;
 	Monitor mMonitor;
 
+	private int i;
+
 	public TaskDispatcher(Monitor monitor, PN pn) {
 		this.mMonitor = monitor;
 		this.mPN = pn;
@@ -11,13 +13,14 @@ class TaskDispatcher extends  Thread {
 
 	@Override
 	public void run() {
-		for (int i = 0; i< 1000; i++) {
+		i = 0;
+        while(!interrupted()){
 			String task = "Tarea n: " + i;
 
 			LinkedHashMap<PN.Transitions, Runnable> arrivalRateTransition = new LinkedHashMap<>();
 			arrivalRateTransition.put(PN.Transitions.ARRIVAL_RATE, () -> {});
 
-			while (!mMonitor.fireTransitions(arrivalRateTransition)) {}
+			mMonitor.fireTransitions(arrivalRateTransition);
 
 
 			TasksManager.CPUNumber cpuNumber = Policy.getCpuBuffer(mPN);
@@ -26,15 +29,21 @@ class TaskDispatcher extends  Thread {
 				LinkedHashMap<PN.Transitions, Runnable> startBufferTransition = new LinkedHashMap<>();
 				startBufferTransition.put(PN.Transitions.START_BUFFER_1, () -> {});
 
-				while (!mMonitor.fireTransitions(startBufferTransition)) {}
+				if(mMonitor.fireTransitions(startBufferTransition)){
+					i ++;
+					System.out.println("Mande tarea: " + i + " al buffer " + cpuNumber.toString());
+				}
 
 			} else {
 				LinkedHashMap<PN.Transitions, Runnable> startBufferTransition = new LinkedHashMap<>();
 				startBufferTransition.put(PN.Transitions.START_BUFFER_2, () -> {});
 
-				while (!mMonitor.fireTransitions(startBufferTransition)) {}
+				if(mMonitor.fireTransitions(startBufferTransition)){
+					i ++;
+					System.out.println("Mande tarea: " + i + " al buffer " + cpuNumber.toString());
+				}
 			}
-			System.out.println("Mande tarea: " + i + " al buffer " + cpuNumber.toString());
+			if(i > 1000) break;
 		}
 	}
 }

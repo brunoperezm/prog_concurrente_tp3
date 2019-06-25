@@ -18,5 +18,7 @@ public class Main {
 		cpuStateManager1.start();
 		cpuStateManager2.start();
 
+
+
 	}
 }

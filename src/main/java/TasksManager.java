@@ -17,12 +17,12 @@ class TasksManager extends Thread {
 	public void run() {
 		while (!interrupted()) {
 			if (mCPUNumber.equals(CPUNumber.CPU1)) {
-				while (!mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.START_SERVICE_1))) {}
-				while (!mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.END_SERVICE_RATE_1))) {}
+				mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.START_SERVICE_1));
+				mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.END_SERVICE_RATE_1));
 
 			} else {
-				while (!mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.START_SERVICE_2))) {}
-				while (!mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.END_SERVICE_RATE_2))) {}
+				mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.START_SERVICE_2));
+				mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.END_SERVICE_RATE_2));
 			}
 		}
 	}
