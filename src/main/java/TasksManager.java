@@ -15,15 +15,22 @@ class TasksManager extends Thread {
 
 	@Override
 	public void run() {
-		while (!interrupted()) {
-			if (mCPUNumber.equals(CPUNumber.CPU1)) {
-				mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.START_SERVICE_1));
-				mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.END_SERVICE_RATE_1));
+	    // Prepare
+		PN.Transitions StartService;
+		PN.Transitions EndServiceRate;
 
-			} else {
-				mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.START_SERVICE_2));
-				mMonitor.fireTransitions(Utils.getSingleTransition(PN.Transitions.END_SERVICE_RATE_2));
-			}
+	    if(mCPUNumber.equals(CPUNumber.CPU1)){
+	    	StartService = PN.Transitions.START_SERVICE_1;
+			EndServiceRate = PN.Transitions.END_SERVICE_RATE_1;
+		}
+	    else {
+			StartService = PN.Transitions.START_SERVICE_2;
+			EndServiceRate = PN.Transitions.END_SERVICE_RATE_2;
+		}
+	    // Infinite Loop
+		while (!interrupted()) {
+				mMonitor.fireTransitions(Utils.getSingleTransition(StartService));
+				mMonitor.fireTransitions(Utils.getSingleTransition(EndServiceRate));
 		}
 	}
 }
