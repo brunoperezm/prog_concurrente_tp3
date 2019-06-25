@@ -115,7 +115,7 @@ class PN {
 
 	void fire(Transitions transition) {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
-		System.out.println(getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
+		System.out.println("Marcado antes: " + getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
 		mMarking =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		if(transition.isTemporized()) transition.setInitialTime(null);
@@ -132,31 +132,35 @@ class PN {
 	}
 
 	// WithTime
-	boolean isTransitionEnabled(Transitions transition) {
+	int isTransitionEnabled(Transitions transition) {
 		Array2DRowRealMatrix matrix =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		for (int i = 0; i<matrix.getRowDimension(); i++) {
-			if (matrix.getRow(i)[0] < 0) return false;
+			if (matrix.getRow(i)[0] < 0) return 0;
 		}
 
 		// Inhibition
 		if(transition.equals(Transitions.POWER_DOWN_THRESHOLD_1)){
 			if(getPlaceTokens(Places.Buffer1)!=0 || getPlaceTokens(Places.core1_active) !=0){
-				return false;
+				return 0;
 			}
 		}
 		if(transition.equals(Transitions.POWER_DOWN_THRESHOLD_2)){
 			if(getPlaceTokens(Places.Buffer2)!=0 || getPlaceTokens(Places.core2_active) !=0){
-				return false;
+				return 0;
 			}
 		}
 
 		// Timed transitions
 		if (transition.isTemporized() && transition.getInitialTime() != null) {
 			long elapsedTimeMilis = new Date().getTime() - transition.getInitialTime().getTime();
-			return (elapsedTimeMilis > transition.alfa) && (elapsedTimeMilis < transition.beta);
+			if ((elapsedTimeMilis > transition.alfa) && (elapsedTimeMilis < transition.beta)){
+			    return 1;
+			}else{
+				return (int) (elapsedTimeMilis - transition.alfa);
+			}
 		}
-		return true;
+		return 1;
 	}
 	private boolean isTransitionEnabledWithoutTime(Transitions transition) {
 		Array2DRowRealMatrix matrix =
@@ -171,7 +175,7 @@ class PN {
 	List<Transitions> getEnabledTransitions() {
 		List<Transitions> enabledTransitionsList = new ArrayList<>();
 		for (Transitions t : Transitions.values()) {
-			if (isTransitionEnabled(t)) enabledTransitionsList.add(t);
+			if (isTransitionEnabled(t)==1) enabledTransitionsList.add(t);
 		}
 		return enabledTransitionsList;
 	}
