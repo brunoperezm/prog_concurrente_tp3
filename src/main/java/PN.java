@@ -11,7 +11,7 @@ class PN {
 	private Array2DRowRealMatrix mMarking;
 
 	enum Transitions {
-		ARRIVAL_RATE(0, 20, 50), // arrival_rate h
+		ARRIVAL_RATE(0, 20, 50000), // arrival_rate h
 
 		// CPU 1
 
