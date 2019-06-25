@@ -141,12 +141,12 @@ class PN {
 
 		// Inhibition
 		if(transition.equals(Transitions.POWER_DOWN_THRESHOLD_1)){
-			if(getPlaceTokens(Places.Buffer1)!=0 && getPlaceTokens(Places.core1_active) !=0){
+			if(getPlaceTokens(Places.Buffer1)!=0 || getPlaceTokens(Places.core1_active) !=0){
 				return false;
 			}
 		}
 		if(transition.equals(Transitions.POWER_DOWN_THRESHOLD_2)){
-			if(getPlaceTokens(Places.Buffer2)!=0 && getPlaceTokens(Places.core2_active) !=0){
+			if(getPlaceTokens(Places.Buffer2)!=0 || getPlaceTokens(Places.core2_active) !=0){
 				return false;
 			}
 		}
