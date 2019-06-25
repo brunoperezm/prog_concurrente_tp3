@@ -4,7 +4,8 @@ class TaskDispatcher extends  Thread {
 	private final PN mPN;
 	Monitor mMonitor;
 
-	private int i;
+	private int i1;
+	private int i2;
 
 	public TaskDispatcher(Monitor monitor, PN pn) {
 		this.mMonitor = monitor;
@@ -13,9 +14,10 @@ class TaskDispatcher extends  Thread {
 
 	@Override
 	public void run() {
-		i = 0;
+		i1 = 0;
+		i2 = 0;
         while(!interrupted()){
-			String task = "Tarea n: " + i;
+			String task = "Tarea n: " + i1 + i2;
 
 			LinkedHashMap<PN.Transitions, Runnable> arrivalRateTransition = new LinkedHashMap<>();
 			arrivalRateTransition.put(PN.Transitions.ARRIVAL_RATE, () -> {});
@@ -30,8 +32,8 @@ class TaskDispatcher extends  Thread {
 				startBufferTransition.put(PN.Transitions.START_BUFFER_1, () -> {});
 
 				if(mMonitor.fireTransitions(startBufferTransition)){
-					i ++;
-					System.out.println("Mande tarea: " + i + " al buffer " + cpuNumber.toString());
+					i1 ++;
+					System.out.println("Mande tarea: " + (i1 + i2) + " al buffer " + cpuNumber.toString());
 				}
 
 			} else {
@@ -39,11 +41,15 @@ class TaskDispatcher extends  Thread {
 				startBufferTransition.put(PN.Transitions.START_BUFFER_2, () -> {});
 
 				if(mMonitor.fireTransitions(startBufferTransition)){
-					i ++;
-					System.out.println("Mande tarea: " + i + " al buffer " + cpuNumber.toString());
+					i2 ++;
+					System.out.println("Mande tarea: " + (i1 + i2) + " al buffer " + cpuNumber.toString());
 				}
 			}
-			if(i > 1000) break;
+			if(i1 + i2 >= 1000) {
+				System.out.println("Tareas Buffer 1: " + i1);
+				System.out.println("Tareas Buffer 2: " + i2);
+				break;
+			}
 		}
 	}
 }

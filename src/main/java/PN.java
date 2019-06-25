@@ -154,14 +154,21 @@ class PN {
 		// Timed transitions
 		if (transition.isTemporized() && transition.getInitialTime() != null) {
 			long elapsedTimeMilis = new Date().getTime() - transition.getInitialTime().getTime();
-			if ((elapsedTimeMilis > transition.alfa) && (elapsedTimeMilis < transition.beta)){
-			    return 1;
+			if (elapsedTimeMilis > transition.alfa){
+			    if(elapsedTimeMilis < transition.beta) {
+					return 1;
+				}
+			    else{
+			    	System.out.println(transition + " Se pasó del tiempo beta.");
+			    	return (int) (elapsedTimeMilis - transition.alfa);
+				}
 			}else{
 				return (int) (elapsedTimeMilis - transition.alfa);
 			}
 		}
 		return 1;
 	}
+
 	private boolean isTransitionEnabledWithoutTime(Transitions transition) {
 		Array2DRowRealMatrix matrix =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
