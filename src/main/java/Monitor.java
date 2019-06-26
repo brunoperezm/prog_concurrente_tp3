@@ -7,6 +7,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 class Monitor {
+	private final boolean verbose = false;
 	private final PN mPN;
 
 	private final Lock mLock;
@@ -26,13 +27,17 @@ class Monitor {
 		try {
 			for (PN.Transitions t : transitionsExecutableLinkedHashMap.keySet()) {
 				// sleep in queue until condition is met
-				while (mPN.isTransitionEnabled(t) != 1) {
-					if(t.isTemporized()){
-						conditions.get(t).await(-1 * mPN.isTransitionEnabled(t), TimeUnit.MILLISECONDS);
+                int enabled = mPN.isTransitionEnabled(t);
+				while (enabled != 1) {
+					if(t.isTemporized() && enabled < 0){
+						if(verbose) System.out.println(t.toString() + " a dormir " + (-1 * enabled) + " milisegundos.");
+						conditions.get(t).await(-1 * enabled, TimeUnit.MILLISECONDS);
 					}
 					else {
+						if(verbose) System.out.println(t.toString() + " a dormir.");
 						conditions.get(t).await();
 					}
+					enabled = mPN.isTransitionEnabled(t);
 				}
 
 				mPN.fire(t);

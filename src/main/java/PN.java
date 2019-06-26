@@ -11,7 +11,7 @@ class PN {
 	private Array2DRowRealMatrix mMarking;
 
 	enum Transitions {
-		ARRIVAL_RATE(0, 20, 50000), // arrival_rate h
+		ARRIVAL_RATE(0, 20, 500000), // arrival_rate h
 
 		// CPU 1
 
@@ -154,13 +154,13 @@ class PN {
 		// Timed transitions
 		if (transition.isTemporized() && transition.getInitialTime() != null) {
 			long elapsedTimeMilis = new Date().getTime() - transition.getInitialTime().getTime();
-			if (elapsedTimeMilis > transition.alfa){
-			    if(elapsedTimeMilis < transition.beta) {
+			if (elapsedTimeMilis >= transition.alfa){
+			    if(elapsedTimeMilis <= transition.beta) {
 					return 1;
 				}
 			    else{
 			    	System.out.println(transition + " Se pasó del tiempo beta.");
-			    	return (int) (elapsedTimeMilis - transition.alfa);
+			    	return 0;
 				}
 			}else{
 				return (int) (elapsedTimeMilis - transition.alfa);
