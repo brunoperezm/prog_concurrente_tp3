@@ -1,4 +1,5 @@
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.List;
 
 class PN {
 	private Array2DRowRealMatrix mIncidenceMatrix;
+	private Array2DRowRealMatrix mInhibitionMatrix;
+
 	private Array2DRowRealMatrix mMarking;
 
 	enum Transitions {
@@ -109,7 +112,29 @@ class PN {
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0}, //P16
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1} //P17
 		};
+		double[][] inhibitionMatrix = {
+				// Arrival_rate, c1-Service_rate, c2-Service_rate, CPU1-Power_down_threshold, CPU1-Power_up_delay, CPU2_power_up_delay, CPU2-Power_down_threshold, T1, T2, T3, T4, T5, CPU1-WakeUp, T7, T8
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // c1-Idle
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // c2-Idle
+				{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core1_buffer
+				{0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core1-active
+				{0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core2_buffer
+				{0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core2-active
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU1_ON
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU1-Power_up
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU1-Stand_by
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU2_ON
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU2-Power_up
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU2-Stand_by
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P0
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P1
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P6
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P8
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P16
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} // P17
+		};
 		mIncidenceMatrix = new Array2DRowRealMatrix(incidenceMatrix);
+		mInhibitionMatrix = new Array2DRowRealMatrix(inhibitionMatrix);
 		initInternalCounters();
 	}
 
@@ -140,16 +165,11 @@ class PN {
 		}
 
 		// Inhibition
-		if(transition.equals(Transitions.POWER_DOWN_THRESHOLD_1)){
-			if(getPlaceTokens(Places.Buffer1)!=0 || getPlaceTokens(Places.core1_active) !=0){
-				return 0;
-			}
-		}
-		if(transition.equals(Transitions.POWER_DOWN_THRESHOLD_2)){
-			if(getPlaceTokens(Places.Buffer2)!=0 || getPlaceTokens(Places.core2_active) !=0){
-				return 0;
-			}
-		}
+		double inhibition =
+				mMarking.transpose().multiply(new Array2DRowRealMatrix(
+						mInhibitionMatrix.getColumn(transition.getTransitionCode())))
+							.getRow(0)[0];
+		if (inhibition != 0) return 0;
 
 		// Timed transitions
 		if (transition.isTemporized() && transition.getInitialTime() != null) {
