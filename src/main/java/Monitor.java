@@ -6,7 +6,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-class Monitor {
+public class Monitor {
 	private final boolean verbose = false;
 	private final PN mPN;
 
