@@ -24,7 +24,7 @@ class PN {
 		CONSUME_PENDING_TASK_TOKEN_1(11), // T5 h
 		WAKE_UP_1(12), // T6 h
 		START_SERVICE_1(8), // T2 h
-		END_SERVICE_RATE_1(1, 30, 40), // service_rate h
+		END_SERVICE_RATE_1(1, 5, 10), // service_rate h
         RETURN_PENDING_TASK_1(15),
 
 
@@ -35,7 +35,7 @@ class PN {
 		CONSUME_PENDING_TASK_TOKEN_2(13), // T5 h
 		WAKE_UP_2(14), // T6 h
 		START_SERVICE_2(10), // T2 h
-		END_SERVICE_RATE_2(2, 30, 40), // service_rate h
+		END_SERVICE_RATE_2(2, 15, 20), // service_rate h
 		RETURN_PENDING_TASK_2(16);
 
 		private final int transitionCode;

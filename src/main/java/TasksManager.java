@@ -1,4 +1,5 @@
 import java.util.Queue;
+import java.util.Random;
 
 class TasksManager extends Thread {
 	enum CPUNumber {
@@ -8,9 +9,12 @@ class TasksManager extends Thread {
 	CPUNumber mCPUNumber;
 	Queue<String> tasksBuffer;
 	Monitor mMonitor;
-	TasksManager(Monitor monitor, CPUNumber cpuNumber) {
+	int alfa, beta;
+	TasksManager(Monitor monitor, CPUNumber cpuNumber, int alfa, int beta) {
 		this.mMonitor = monitor;
 		this.mCPUNumber = cpuNumber;
+		this.alfa = alfa;
+		this.beta = beta;
 	}
 
 	@Override
@@ -26,7 +30,14 @@ class TasksManager extends Thread {
 	    	    // Infinite Loop
 		while (!interrupted()) {
 				mMonitor.fireTransitions(Utils.getSingleTransition(StartService));
-				mMonitor.fireTransitions(Utils.getSingleTransition(EndServiceRate));
+				Random r = new Random();
+				int result = r.nextInt(beta-alfa) + alfa;
+			try {
+				Thread.sleep(result);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			mMonitor.fireTransitions(Utils.getSingleTransition(EndServiceRate));
 		}
 	}
 }
