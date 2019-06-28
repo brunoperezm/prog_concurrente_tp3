@@ -12,30 +12,51 @@ class PN {
 
 	private Array2DRowRealMatrix mMarking;
 
+//	Arrival_rate
+//			c1_Service_start
+//	c1-Service_rate
+//			c2_Service_start 3
+//	c2-Service_rate 4
+//	CPU1-Power_down_threshold 5
+//	CPU1-Power_up_delay 6
+//	CPU1-ReturnPendingTask 7
+//	CPU1-StartBuffer 8
+//	CPU1-WakeUp 9
+//			CPU2_power_up_delay 10
+//	CPU2-ConsumePendingTask 11
+//	CPU2-Power_down_threshold 12
+//	CPU2-ReturnPendingTask 13
+//	CPU2-StartBuffer 14
+//	CPU2-WakeUp 15
+//			ZT17 16
+//	ZT18 17
+//	CPU1-ConsumePendingTask 18
 	enum Transitions {
 		ARRIVAL_RATE(0, Main.ARRIVAL_RATE_1_ALFA, Main.ARRIVAL_RATE_1_BETA), // arrival_rate h
 
 		// CPU 1
 
-		START_BUFFER_1(9), // T1 h
-		POWER_UP_DELAY_1(7), // power_up_delay h
-		POWER_DOWN_THRESHOLD_1(6), // power_down_threshold h
-		CONSUME_PENDING_TASK_TOKEN_1(5), // T5 h
-		WAKE_UP_1(10), // T6 h
+		START_BUFFER_1(8), // T1 h
+		POWER_UP_DELAY_1(6), // power_up_delay h
+		POWER_DOWN_THRESHOLD_1(5), // power_down_threshold h
+		CONSUME_PENDING_TASK_TOKEN_1(18), // T5 h
+		WAKE_UP_1(9), // T6 h
 		START_SERVICE_1(1), // T2 h
 		END_SERVICE_RATE_1(2, Main.SERVICE_RATE_1_ALFA, Main.SERVICE_RATE_1_BETA), // service_rate h
-        RETURN_PENDING_TASK_1(8),
+        RETURN_PENDING_TASK_1(7),
+		ZT17(16), // ZT17 h
 
 
 		// CPU 2
-		START_BUFFER_2(15), // T1 h
-		POWER_UP_DELAY_2(11), // power_up_delay h
-		POWER_DOWN_THRESHOLD_2(13), // power_down_threshold h
-		CONSUME_PENDING_TASK_TOKEN_2(12), // T5 h
-		WAKE_UP_2(16), // T6 h
+		START_BUFFER_2(14), // T1 h
+		POWER_UP_DELAY_2(10), // power_up_delay h
+		POWER_DOWN_THRESHOLD_2(12), // power_down_threshold h
+		CONSUME_PENDING_TASK_TOKEN_2(11), // T5 h
+		WAKE_UP_2(15), // T6 h
 		START_SERVICE_2(3), // T2 h
 		END_SERVICE_RATE_2(4, Main.SERVICE_RATE_2_ALFA, Main.SERVICE_RATE_2_BETA), // service_rate h
-		RETURN_PENDING_TASK_2(14);
+		ZT18(17), // ZT17 h
+		RETURN_PENDING_TASK_2(13);
 
 		private final int transitionCode;
 		private Integer alfa;
@@ -101,35 +122,36 @@ class PN {
 		double[] initialMarking = {1,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0};
 		mMarking = new Array2DRowRealMatrix(initialMarking);
 		double[][] incidenceMatrix = {
-				{0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 0}, // c1-Idle
-				{0,0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0, 0, 0}, // c2-Idle
-				{0,-1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0, 0, 0}, // core1_buffer
-				{0,1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 0}, // core1-active
-				{0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,1,0, 0, 0}, // core2_buffer
-				{0,0,0,1,-1,0,0,0,0,0,0,0,0,0,0,0,0, 0, 0}, // core2-active
-				{0,0,0,0,0,0,-1,1,0,0,0,0,0,0,0,0,0, -1, 0}, // CPU1_ON
-				{0,0,0,0,0,0,0,-1,0,0,1,0,0,0,0,0,0, 0, 0}, // CPU1-Power_up
-				{0,0,0,0,0,0,1,0,0,0,-1,0,0,0,0,0,0, 0, 0}, // CPU1-Stand_by
-				{0,0,0,0,0,0,0,0,0,0,0,1,0,-1,0,0,0, 0, 1}, // CPU2_ON
-				{0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,1, 0, 0}, // CPU2-Power_up
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,-1, 0, 0}, // CPU2-Stand_by
-				{-1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0, 0, 0}, // P0
-				{1,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,-1,0, 0, 0}, // P1
-				{0,0,0,0,0,0,0,0,-1,0,1,0,0,0,0,0,0, 0, 0}, // P16
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,1, 0, 0}, // P17
-				{0,0,0,0,0,-1,0,-1,1,1,-1,0,0,0,0,0,0, 0, 0}, // P6
-				{0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,1,1,-1, 0, 0}, // P8
-				{0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0, 1, 0}, // Z18
-				{0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0, 0, -1}, // ZP19
+				//, Arrival_rate, c1_Service_start, c1-Service_rate, c2_Service_start, c2-Service_rate, CPU1-Power_down_threshold, CPU1-Power_up_delay, CPU1-ReturnPendingTask, CPU1-StartBuffer, CPU1-WakeUp, CPU2_power_up_delay, CPU2-ConsumePendingTask, CPU2-Power_down_threshold, CPU2-ReturnPendingTask, CPU2-StartBuffer, CPU2-WakeUp, ZT17, ZT18, CPU1-ConsumePendingTask
+				{0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //c1-Idle
+				{0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // c2-Idle
+				{0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core1_buffer
+				{0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core1-active
+				{0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, // core2_buffer
+				{0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core2-active
+				{0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1}, // CPU1_ON
+				{0, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU1-Power_up
+				{0, 0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU1-Stand_by
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, -1, 0, 0, 0, 0, 1, 0}, // CPU2_ON
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0}, // CPU2-Power_up
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0}, // CPU2-Stand_by
+				{-1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, // P0
+				{1, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0}, // P1
+				{0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P16
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0}, // P17
+				{0, 0, 0, 0, 0, 0, -1, 1, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, -1}, // P6
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0, 1, 1, -1, 0, 0, 0}, // P8
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0}, // ZP19
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1} // Z18
 		};
 		double[][] inhibitionMatrix = {
 				// Arrival_rate, c1-Service_rate, c2-Service_rate, CPU1-Power_down_threshold, CPU1-Power_up_delay, CPU2_power_up_delay, CPU2-Power_down_threshold, T1, T2, T3, T4, T5, CPU1-WakeUp, T7, T8
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // c1-Idle
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // c2-Idle
-				{0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core1_buffer
-				{0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core1-active
-				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, // core2_buffer
-				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0}, // core2-active
+				{0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core1_buffer
+				{0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // core1-active
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}, // core2_buffer
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}, // core2-active
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU1_ON
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU1-Power_up
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU1-Stand_by
@@ -138,12 +160,12 @@ class PN {
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // CPU2-Stand_by
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P0
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P1
-				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P6
-				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P8
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P16
 				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P17
-				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // Z18
-				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} // ZP19
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P6
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // P8
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // ZP19
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} // Z18
 		};
 		mIncidenceMatrix = new Array2DRowRealMatrix(incidenceMatrix);
 		mInhibitionMatrix = new Array2DRowRealMatrix(inhibitionMatrix);
