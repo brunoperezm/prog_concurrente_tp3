@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Main {
 
-	public static int TOTAL_TASKS = 1000;
+	public static int TOTAL_TASKS = 10;
 
 
 

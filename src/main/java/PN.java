@@ -232,6 +232,12 @@ class PN {
 		for (int i = 0; i<matrix.getRowDimension(); i++) {
 			if (matrix.getRow(i)[0] < 0) return false;
 		}
+		// Inhibition
+		double inhibition =
+				mMarking.transpose().multiply(new Array2DRowRealMatrix(
+						mInhibitionMatrix.getColumn(transition.getTransitionCode())))
+						.getRow(0)[0];
+		if (inhibition != 0) return false;
 		return true;
 	}
 
