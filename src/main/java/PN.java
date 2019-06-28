@@ -72,10 +72,20 @@ class PN {
 		}
 	}
 	enum Places {
+		c1_idle(0),
+		c2_idle(1),
 		Buffer1(2),
 		core1_active(3),
 		Buffer2(4),
-		core2_active(5);
+		core2_active(5),
+		CPU1_ON(6),
+		CPU1_PowerUp(7),
+		CPU1_StandBy(8),
+		CPU2_ON(9),
+		CPU2_PowerUp(10),
+		CPU2_StandBy(11),
+		P0(12),
+		P1(13);
 
 		int position;
 		Places (int position) {

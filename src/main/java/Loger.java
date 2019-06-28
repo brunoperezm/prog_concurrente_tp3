@@ -65,9 +65,9 @@ public class Loger extends Thread {
 
         pw.printf("\n");
 
-        pw.printf("Buffers Loads:\n");
+        printInvariants(pw);
 
-        int b = 0;
+        pw.printf("Buffers Loads:\n");
 
         pw.printf("Threads States:\n");
         for (Thread c: threadList) {
@@ -76,4 +76,20 @@ public class Loger extends Thread {
 
         pw.printf("\n%s", last? " \nExecution completed in less than "+each*i+" seconds." : "");
     }
+    private void printInvariants(PrintWriter pw){
+        pw.printf("Invariants: \n");
+        //1
+        pw.printf("P0(%d) + P1(%d) = 1\n", mPN.getPlaceTokens(PN.Places.P0), mPN.getPlaceTokens(PN.Places.P1));
+        //2
+        pw.printf("c1-idle(%d) + core1-active(%d) = 1\n", mPN.getPlaceTokens(PN.Places.c1_idle), mPN.getPlaceTokens(PN.Places.core1_active));
+        pw.printf("c2-idle(%d) + core2-active(%d) = 1\n", mPN.getPlaceTokens(PN.Places.c2_idle), mPN.getPlaceTokens(PN.Places.core2_active));
+        //3
+        pw.printf("CPU1_ON(%d) + CPU1-Power_up(%d) + CPU1-Stand_by(%d) = 1\n", mPN.getPlaceTokens(PN.Places.CPU1_ON), mPN.getPlaceTokens(PN.Places.CPU1_PowerUp), mPN.getPlaceTokens(PN.Places.CPU1_StandBy));
+        pw.printf("CPU2_ON(%d) + CPU2-Power_up(%d) + CPU2-Stand_by(%d) = 1\n", mPN.getPlaceTokens(PN.Places.CPU2_ON), mPN.getPlaceTokens(PN.Places.CPU2_PowerUp), mPN.getPlaceTokens(PN.Places.CPU2_StandBy));
+    }
+
+    public void stop(int elapsedTime) {
+        this.interrupt();
+    }
 }
+

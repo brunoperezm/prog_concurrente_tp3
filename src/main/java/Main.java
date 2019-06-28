@@ -44,6 +44,7 @@ public class Main {
 			taskDispatcher.join();
 			int elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
 			System.out.println("1000 tareas despachadas en " + elapsedTime + " segundos.");
+			loger.stop(elapsedTime);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
