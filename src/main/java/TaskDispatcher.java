@@ -1,15 +1,15 @@
 import java.util.LinkedHashMap;
 
 class TaskDispatcher extends  Thread {
-	private final PN mPN;
+	private final Policy mPolicy;
 	Monitor mMonitor;
 
 	private int i1;
 	private int i2;
 
-	public TaskDispatcher(Monitor monitor, PN pn) {
+	public TaskDispatcher(Monitor monitor, Policy policy) {
 		this.mMonitor = monitor;
-		this.mPN = pn;
+		this.mPolicy = policy;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ class TaskDispatcher extends  Thread {
 			mMonitor.fireTransitions(arrivalRateTransition);
 
 
-			TasksManager.CPUNumber cpuNumber = Policy.getCpuBuffer(mPN);
+			TasksManager.CPUNumber cpuNumber = mPolicy.getCpuBuffer();
 
 			if (cpuNumber.equals(TasksManager.CPUNumber.CPU1)) {
 				LinkedHashMap<PN.Transitions, Runnable> startBufferTransition = new LinkedHashMap<>();

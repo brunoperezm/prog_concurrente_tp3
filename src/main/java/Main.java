@@ -17,6 +17,7 @@ public class Main {
 	public static void main(String args[]) {
 		Date initTime;
 		PN pn = new PN();
+		Policy policy = new Policy(pn);
 		Monitor monitor = new Monitor(pn);
 
 		Loger loger;
@@ -26,7 +27,7 @@ public class Main {
 
 		CPUStateManager cpuStateManager1 = new CPUStateManager(monitor, TasksManager.CPUNumber.CPU1);
 		CPUStateManager cpuStateManager2 = new CPUStateManager(monitor, TasksManager.CPUNumber.CPU2);
-		TaskDispatcher taskDispatcher = new TaskDispatcher(monitor, pn);
+		TaskDispatcher taskDispatcher = new TaskDispatcher(monitor, policy);
 
 		List<Thread> threadList = Arrays.asList(tasksManager1, tasksManager2, cpuStateManager1, cpuStateManager2, taskDispatcher);
 		loger = new Loger(monitor, threadList, pn, "out/log.txt");
