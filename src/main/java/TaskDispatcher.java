@@ -45,7 +45,7 @@ class TaskDispatcher extends  Thread {
 					System.out.println("Mande tarea: " + (i1 + i2) + " al buffer " + cpuNumber.toString());
 				}
 			}
-			if(i1 + i2 >= 1000) {
+			if(i1 + i2 >= Main.TOTAL_TASKS) {
 				System.out.println("Tareas Buffer 1: " + i1);
 				System.out.println("Tareas Buffer 2: " + i2);
 				break;

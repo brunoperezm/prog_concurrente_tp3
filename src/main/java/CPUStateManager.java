@@ -43,7 +43,6 @@ class CPUStateManager extends Thread {
 				e.printStackTrace();
 			}
 			mMonitor.fireTransitions(Utils.getSingleTransition(PowerUpDelay));
-			mMonitor.fireTransitions(Utils.getSingleTransition(ConsumePendingTask));
 			mMonitor.fireTransitions(Utils.getSingleTransition(PowerDownThreshold));
 		}
 	}
