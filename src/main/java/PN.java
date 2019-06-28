@@ -1,5 +1,4 @@
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ class PN {
 	private Array2DRowRealMatrix mMarking;
 
 	enum Transitions {
-		ARRIVAL_RATE(0, 20, 500000), // arrival_rate h
+		ARRIVAL_RATE(0, Main.ARRIVAL_RATE_1_ALFA, Main.ARRIVAL_RATE_1_BETA), // arrival_rate h
 
 		// CPU 1
 
@@ -24,7 +23,7 @@ class PN {
 		CONSUME_PENDING_TASK_TOKEN_1(11), // T5 h
 		WAKE_UP_1(12), // T6 h
 		START_SERVICE_1(8), // T2 h
-		END_SERVICE_RATE_1(1, 5, 10), // service_rate h
+		END_SERVICE_RATE_1(1, Main.SERVICE_RATE_1_ALFA, Main.SERVICE_RATE_1_BETA), // service_rate h
         RETURN_PENDING_TASK_1(15),
 
 
@@ -35,7 +34,7 @@ class PN {
 		CONSUME_PENDING_TASK_TOKEN_2(13), // T5 h
 		WAKE_UP_2(14), // T6 h
 		START_SERVICE_2(10), // T2 h
-		END_SERVICE_RATE_2(2, 15, 20), // service_rate h
+		END_SERVICE_RATE_2(2, Main.SERVICE_RATE_2_ALFA, Main.SERVICE_RATE_2_BETA), // service_rate h
 		RETURN_PENDING_TASK_2(16);
 
 		private final int transitionCode;

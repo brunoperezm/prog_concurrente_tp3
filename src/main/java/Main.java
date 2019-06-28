@@ -1,11 +1,18 @@
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Main {
 
 
+	public static int ARRIVAL_RATE_1_ALFA = 1;
+	public static int ARRIVAL_RATE_1_BETA = 2000;
+
+	public static int SERVICE_RATE_1_ALFA = 1;
+	public static int SERVICE_RATE_1_BETA = 2000;
+
+	public static int SERVICE_RATE_2_ALFA = 1;
+	public static int SERVICE_RATE_2_BETA = 2000;
 
 	public static void main(String args[]) {
 		Date initTime;
@@ -14,8 +21,8 @@ public class Main {
 
 		Loger loger;
 
-		TasksManager tasksManager1 = new TasksManager(monitor, TasksManager.CPUNumber.CPU1, 5, 10);
-		TasksManager tasksManager2 = new TasksManager(monitor, TasksManager.CPUNumber.CPU2, 15, 20);
+		TasksManager tasksManager1 = new TasksManager(monitor, TasksManager.CPUNumber.CPU1, SERVICE_RATE_1_ALFA, SERVICE_RATE_1_BETA);
+		TasksManager tasksManager2 = new TasksManager(monitor, TasksManager.CPUNumber.CPU2, SERVICE_RATE_1_ALFA, SERVICE_RATE_2_BETA);
 
 		CPUStateManager cpuStateManager1 = new CPUStateManager(monitor, TasksManager.CPUNumber.CPU1);
 		CPUStateManager cpuStateManager2 = new CPUStateManager(monitor, TasksManager.CPUNumber.CPU2);

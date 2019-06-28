@@ -7,6 +7,7 @@ class TasksManager extends Thread {
 		CPU2;
 	}
 	CPUNumber mCPUNumber;
+
 	Queue<String> tasksBuffer;
 	Monitor mMonitor;
 	int alfa, beta;
@@ -15,6 +16,7 @@ class TasksManager extends Thread {
 		this.mCPUNumber = cpuNumber;
 		this.alfa = alfa;
 		this.beta = beta;
+		this.setName("TastManager " + cpuNumber.toString());
 	}
 
 	@Override

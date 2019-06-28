@@ -6,6 +6,7 @@ class CPUStateManager extends Thread {
 	public CPUStateManager(Monitor monitor, TasksManager.CPUNumber cpu) {
 		mCPUNumber = cpu;
 		mMonitor = monitor;
+		this.setName("CpuStateManager " + cpu.toString());
 	}
 
 	@Override
