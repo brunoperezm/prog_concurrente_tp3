@@ -51,8 +51,10 @@ public class Monitor {
 		catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return false;
-		}
-		finally {
+		} catch (PN.InvalidPInvariantException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
 			mLock.unlock();
 		}
 	}

@@ -4,19 +4,16 @@ import java.util.List;
 
 public class Main {
 
-	public static int TOTAL_TASKS = 10;
-
-
-
+	public static int TOTAL_TASKS = 1000;
 
 	public static int ARRIVAL_RATE_1_ALFA = 10;
 	public static int ARRIVAL_RATE_1_BETA = 20000000;
 
 	public static int SERVICE_RATE_1_ALFA = 20;
-	public static int SERVICE_RATE_1_BETA = 40;
+	public static int SERVICE_RATE_1_BETA = 100;
 
 	public static int SERVICE_RATE_2_ALFA = 20;
-	public static int SERVICE_RATE_2_BETA = 80;
+	public static int SERVICE_RATE_2_BETA = 100;
 
 
 	public static void main(String args[]) {

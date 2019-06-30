@@ -12,6 +12,8 @@ class PN {
 
 	private Array2DRowRealMatrix mMarking;
 
+	private PInvariants[] invariants;
+
 //	Arrival_rate
 //			c1_Service_start
 //	c1-Service_rate
@@ -76,10 +78,10 @@ class PN {
 			this.beta = beta;
 		}
 
-
 		public int getTransitionCode() {
 			return transitionCode;
 		}
+
 		public boolean isTemporized() {
 			return (alfa != null && beta != null);
 		}
@@ -106,7 +108,9 @@ class PN {
 		CPU2_PowerUp(10),
 		CPU2_StandBy(11),
 		P0(12),
-		P1(13);
+		P1(13),
+		Z18(19),
+		ZP19(18);
 
 		int position;
 		Places (int position) {
@@ -118,9 +122,40 @@ class PN {
 		}
 	}
 
+	class InvalidPInvariantException extends Exception {}
+
+	class PInvariants {
+		final int invariant;
+
+		Places[] places;
+
+		PInvariants(int invariant, Places... places){
+			this.invariant = invariant;
+			this.places = places;
+		}
+
+		boolean checkInvariant(Array2DRowRealMatrix marking) {
+			double value = 0;
+
+			for (Places p: places) {
+				value += marking.getEntry(p.getPosition(), 0);
+			}
+
+			return (value == invariant);
+		}
+	}
+
 	PN() {
 		double[] initialMarking = {1,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0};
 		mMarking = new Array2DRowRealMatrix(initialMarking);
+
+		this.invariants = new PInvariants[]{
+				new PInvariants(1, Places.P0, Places.P1),
+				new PInvariants(1, Places.c1_idle, Places.core1_active),
+				new PInvariants(1, Places.c2_idle, Places.core2_active),
+				new PInvariants(1, Places.CPU1_ON, Places.CPU1_PowerUp, Places.CPU1_StandBy, Places.Z18),
+				new PInvariants(1, Places.CPU2_ON, Places.CPU2_PowerUp, Places.CPU2_StandBy, Places.ZP19)};
+
 		double[][] incidenceMatrix = {
 				//, Arrival_rate, c1_Service_start, c1-Service_rate, c2_Service_start, c2-Service_rate, CPU1-Power_down_threshold, CPU1-Power_up_delay, CPU1-ReturnPendingTask, CPU1-StartBuffer, CPU1-WakeUp, CPU2_power_up_delay, CPU2-ConsumePendingTask, CPU2-Power_down_threshold, CPU2-ReturnPendingTask, CPU2-StartBuffer, CPU2-WakeUp, ZT17, ZT18, CPU1-ConsumePendingTask
 				{0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, //c1-Idle
@@ -172,13 +207,19 @@ class PN {
 		initInternalCounters();
 	}
 
-	void fire(Transitions transition) {
+	void fire(Transitions transition) throws InvalidPInvariantException {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
 		System.out.println("Marcado antes: " + getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
 		mMarking =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		if(transition.isTemporized()) transition.setInitialTime(null);
 		initInternalCounters();
+		checkPInvariant();
+	}
+
+	private void checkPInvariant() throws InvalidPInvariantException {
+		for (PInvariants pi: invariants)
+			if (!pi.checkInvariant(mMarking)) throw new InvalidPInvariantException();
 	}
 
 	private void initInternalCounters() {

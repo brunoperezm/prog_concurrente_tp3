@@ -31,14 +31,7 @@ class TasksManager extends Thread {
 
 	    	    // Infinite Loop
 		while (!interrupted()) {
-				mMonitor.fireTransitions(Utils.getSingleTransition(StartService));
-				Random r = new Random();
-				int result = r.nextInt(beta-alfa) + alfa;
-			try {
-				Thread.sleep(result);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			mMonitor.fireTransitions(Utils.getSingleTransition(StartService));
 			mMonitor.fireTransitions(Utils.getSingleTransition(EndServiceRate));
 		}
 	}
