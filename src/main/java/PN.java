@@ -13,6 +13,7 @@ class PN {
 	private Array2DRowRealMatrix mMarking;
 
 	private PInvariants[] invariants;
+	private boolean checkInvariants;
 
 //	Arrival_rate
 //			c1_Service_start
@@ -145,7 +146,7 @@ class PN {
 		}
 	}
 
-	PN() {
+	PN(boolean checkInvariants) {
 		double[] initialMarking = {1,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0};
 		mMarking = new Array2DRowRealMatrix(initialMarking);
 
@@ -155,6 +156,7 @@ class PN {
 				new PInvariants(1, Places.c2_idle, Places.core2_active),
 				new PInvariants(1, Places.CPU1_ON, Places.CPU1_PowerUp, Places.CPU1_StandBy, Places.Z18),
 				new PInvariants(1, Places.CPU2_ON, Places.CPU2_PowerUp, Places.CPU2_StandBy, Places.ZP19)};
+		this.checkInvariants = checkInvariants;
 
 		double[][] incidenceMatrix = {
 				//, Arrival_rate, c1_Service_start, c1-Service_rate, c2_Service_start, c2-Service_rate, CPU1-Power_down_threshold, CPU1-Power_up_delay, CPU1-ReturnPendingTask, CPU1-StartBuffer, CPU1-WakeUp, CPU2_power_up_delay, CPU2-ConsumePendingTask, CPU2-Power_down_threshold, CPU2-ReturnPendingTask, CPU2-StartBuffer, CPU2-WakeUp, ZT17, ZT18, CPU1-ConsumePendingTask
@@ -214,7 +216,7 @@ class PN {
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		if(transition.isTemporized()) transition.setInitialTime(null);
 		initInternalCounters();
-		checkPInvariant();
+		if (checkInvariants) checkPInvariant();
 	}
 
 	private void checkPInvariant() throws InvalidPInvariantException {

@@ -18,7 +18,7 @@ public class Main {
 
 	public static void main(String args[]) {
 		Date initTime;
-		PN pn = new PN();
+		PN pn = new PN(false);
 		Policy policy = new Policy(pn);
 		Monitor monitor = new Monitor(pn);
 
