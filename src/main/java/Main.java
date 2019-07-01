@@ -49,6 +49,15 @@ public class Main {
 		consumePendingFlag1.start();
 		consumePendingFlag2.start();
 
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					monitor.checkTransitionInvariants();
+				}
+			}
+		}).start();
+
 		try {
 			taskDispatcher.join();
 			int elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
