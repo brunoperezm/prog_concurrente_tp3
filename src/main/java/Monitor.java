@@ -1,6 +1,4 @@
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -13,6 +11,20 @@ public class Monitor {
 	private final Lock mLock;
 	private final HashMap<PN.Transitions, Condition> conditions = new HashMap<>();
 
+	class BoolTransitionWrapper {
+		final private boolean status;
+		final private PN.Transitions transition;
+
+		BoolTransitionWrapper(boolean s, PN.Transitions t) {
+			this.status = s;
+			this.transition = t;
+		}
+
+		public boolean getStatus() { return this.status; }
+
+		public PN.Transitions getTransition() { return this.transition; }
+	}
+
 	Monitor(PN pn) {
 		mPN = pn;
 
@@ -20,6 +32,21 @@ public class Monitor {
 		// create one condition per transition
 		for (PN.Transitions t : PN.Transitions.values()) conditions.put(t, mLock.newCondition());
 	}
+
+	public BoolTransitionWrapper taskDispatch() {
+		mLock.lock();
+
+		try {
+			PN.Transitions t = mPN.sharedLoadPolicy.getBufferTransition();
+			boolean firedStatus = fireTransitions(t);
+
+			return new BoolTransitionWrapper(firedStatus, t);
+		}
+		finally {
+			mLock.unlock();
+		}
+	}
+
 	/**
 	 * @return true if the transition could be fired, else otherwise */
 	public boolean fireTransitions(PN.Transitions transition) {
