@@ -27,11 +27,12 @@ class TaskDispatcher extends  Thread {
 					? TasksManager.CPUNumber.CPU1
 					: TasksManager.CPUNumber.CPU2);
 
-			if (cpuNumber.equals(TasksManager.CPUNumber.CPU1)) i1++;
-			else i2++;
+			if (bt.getStatus()) {
+				if (cpuNumber.equals(TasksManager.CPUNumber.CPU1)) i1++;
+				else i2++;
 
-			if (bt.getStatus())
 				System.out.println("Mande tarea: " + (i1 + i2) + " al buffer " + cpuNumber.toString());
+			}
 
 			if(i1 + i2 >= Main.TOTAL_TASKS) {
 				System.out.println("Tareas Buffer 1: " + i1);
