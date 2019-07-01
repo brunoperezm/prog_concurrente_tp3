@@ -31,8 +31,8 @@ class TasksManager extends Thread {
 
 	    	    // Infinite Loop
 		while (!interrupted()) {
-			mMonitor.fireTransitions(Utils.getSingleTransition(StartService));
-			mMonitor.fireTransitions(Utils.getSingleTransition(EndServiceRate));
+			mMonitor.fireTransitions(StartService);
+			mMonitor.fireTransitions(EndServiceRate);
 		}
 	}
 }
