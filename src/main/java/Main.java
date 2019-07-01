@@ -16,7 +16,7 @@ public class Main {
 	public static int SERVICE_RATE_2_BETA = 100;
 
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		Date initTime;
 		PN pn = new PN(false);
 		Policy policy = new Policy(pn);
