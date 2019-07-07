@@ -18,27 +18,22 @@ class TaskDispatcher extends  Thread {
         while(!interrupted()){
 			String task = "Tarea n: " + i1 + i2;
 
-
-
 			mMonitor.fireTransitions(PN.Transitions.ARRIVAL_RATE);
 
+			Monitor.BoolTransitionWrapper bt = mMonitor.taskDispatch();
 
-			TasksManager.CPUNumber cpuNumber = mPolicy.getCpuBuffer();
+			TasksManager.CPUNumber cpuNumber =
+					(bt.getTransition().equals(PN.Transitions.START_BUFFER_1)
+					? TasksManager.CPUNumber.CPU1
+					: TasksManager.CPUNumber.CPU2);
 
-			if (cpuNumber.equals(TasksManager.CPUNumber.CPU1)) {
+			if (bt.getStatus()) {
+				if (cpuNumber.equals(TasksManager.CPUNumber.CPU1)) i1++;
+				else i2++;
 
-				if(mMonitor.fireTransitions(PN.Transitions.START_BUFFER_1)){
-					i1 ++;
-					System.out.println("Mande tarea: " + (i1 + i2) + " al buffer " + cpuNumber.toString());
-				}
-
-			} else {
-
-				if(mMonitor.fireTransitions(PN.Transitions.START_BUFFER_2)){
-					i2 ++;
-					System.out.println("Mande tarea: " + (i1 + i2) + " al buffer " + cpuNumber.toString());
-				}
+				System.out.println("Mande tarea: " + (i1 + i2) + " al buffer " + cpuNumber.toString());
 			}
+
 			if(i1 + i2 >= Main.TOTAL_TASKS) {
 				System.out.println("Tareas Buffer 1: " + i1);
 				System.out.println("Tareas Buffer 2: " + i2);

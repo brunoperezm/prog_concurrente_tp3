@@ -12,7 +12,7 @@ public class Main {
 	public static int SERVICE_RATE_1_ALFA = 20;
 	public static int SERVICE_RATE_1_BETA = 100;
 
-	public static int SERVICE_RATE_2_ALFA = 20;
+	public static int SERVICE_RATE_2_ALFA = 80;
 	public static int SERVICE_RATE_2_BETA = 100;
 
 
