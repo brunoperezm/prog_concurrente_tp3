@@ -1,15 +1,17 @@
 class Policy {
 
-	PN mPN;
+	private PN mPN;
 
-	public Policy(PN PN) {
+	Policy(PN PN) {
 		mPN = PN;
 	}
 
-	public TasksManager.CPUNumber getCpuBuffer() {
+	public PN.Transitions getBufferTransition() {
 		int buffer1Tokens = mPN.getPlaceTokens(PN.Places.Buffer1);
 		int buffer2Tokens = mPN.getPlaceTokens(PN.Places.Buffer2);
 
-		 return (buffer1Tokens > buffer2Tokens) ? TasksManager.CPUNumber.CPU2 : TasksManager.CPUNumber.CPU1;
+		return (buffer1Tokens > buffer2Tokens)
+				? PN.Transitions.START_BUFFER_2
+				: PN.Transitions.START_BUFFER_1;
 	}
 }

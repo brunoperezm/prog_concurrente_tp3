@@ -15,8 +15,6 @@ class PN {
 	private PInvariants[] invariants;
 	private boolean checkInvariants;
 
-	public Policy sharedLoadPolicy;
-
 //	Arrival_rate
 //			c1_Service_start
 //	c1-Service_rate
@@ -121,21 +119,6 @@ class PN {
 		}
 	}
 
-	class InvalidPInvariantException extends Exception {}
-
-	class Policy {
-		Policy() {}
-
-		public Transitions getBufferTransition() {
-			int buffer1Tokens = getPlaceTokens(PN.Places.Buffer1);
-			int buffer2Tokens = getPlaceTokens(PN.Places.Buffer2);
-
-			return (buffer1Tokens > buffer2Tokens)
-					? Transitions.START_BUFFER_2
-					: Transitions.START_BUFFER_1;
-		}
-	}
-
 	class PInvariants {
 		final int invariant;
 
@@ -160,8 +143,6 @@ class PN {
 	PN(boolean checkInvariants) {
 		double[] initialMarking = {1,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0};
 		mMarking = new Array2DRowRealMatrix(initialMarking);
-
-		sharedLoadPolicy = new Policy();
 
 		this.invariants = new PInvariants[]{
 				new PInvariants(1, Places.P0, Places.P1),
@@ -225,19 +206,21 @@ class PN {
 		initInternalCounters();
 	}
 
-	void fire(Transitions transition) throws InvalidPInvariantException {
+	void fire(Transitions transition) {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
 		System.out.println("Marcado antes: " + getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
 		mMarking =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		if(transition.isTemporized()) transition.setInitialTime(null);
 		initInternalCounters();
-		if (checkInvariants) checkPInvariant();
+		assert checkPInvariant();
 	}
 
-	private void checkPInvariant() throws InvalidPInvariantException {
+	private boolean checkPInvariant() {
 		for (PInvariants pi: invariants)
-			if (!pi.checkInvariant(mMarking)) throw new InvalidPInvariantException();
+			if (!pi.checkInvariant(mMarking)) return false;
+
+		return true;
 	}
 
 	private void initInternalCounters() {

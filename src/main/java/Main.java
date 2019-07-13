@@ -4,21 +4,21 @@ import java.util.List;
 
 public class Main {
 
-	public static int TOTAL_TASKS = 1000;
+	static int TOTAL_TASKS = 1000;
 
-	public static int ARRIVAL_RATE_1_ALFA = 10;
-	public static int ARRIVAL_RATE_1_BETA = 20000000;
+	static int ARRIVAL_RATE_1_ALFA = 10;
+	static int ARRIVAL_RATE_1_BETA = 20000000;
 
-	public static int SERVICE_RATE_1_ALFA = 20;
-	public static int SERVICE_RATE_1_BETA = 100;
+	static int SERVICE_RATE_1_ALFA = 20;
+	static int SERVICE_RATE_1_BETA = 100;
 
-	public static int SERVICE_RATE_2_ALFA = 80;
-	public static int SERVICE_RATE_2_BETA = 100;
+	static int SERVICE_RATE_2_ALFA = 80;
+	static int SERVICE_RATE_2_BETA = 100;
 
 
 	public static void main(String[] args) {
 		Date initTime;
-		PN pn = new PN(false);
+		PN pn = new PN(true);
 		Policy policy = new Policy(pn);
 		Monitor monitor = new Monitor(pn);
 
