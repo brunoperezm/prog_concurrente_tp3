@@ -16,7 +16,7 @@ class TasksManager extends Thread {
 		this.mCPUNumber = cpuNumber;
 		this.alfa = alfa;
 		this.beta = beta;
-		this.setName("TastManager " + cpuNumber.toString());
+		this.setName("TaskManager " + cpuNumber.toString());
 	}
 
 	@Override

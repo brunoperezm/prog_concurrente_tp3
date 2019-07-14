@@ -13,7 +13,7 @@ public class Main {
 	static int SERVICE_RATE_1_BETA = 100;
 
 	static int SERVICE_RATE_2_ALFA = 80;
-	static int SERVICE_RATE_2_BETA = 100;
+	static int SERVICE_RATE_2_BETA = 150;
 
 
 	public static void main(String[] args) {
