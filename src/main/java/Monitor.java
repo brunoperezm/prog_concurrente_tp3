@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Monitor {
 	private final boolean verbose = false;
 	private final PN mPN;
-	private final Policy sharedLoadPolicy;
+	private final Policy policy;
 
 	private final Lock mLock;
 	private final HashMap<PN.Transitions, Condition> conditions = new HashMap<>();
@@ -26,9 +26,9 @@ public class Monitor {
 		public PN.Transitions getTransition() { return this.transition; }
 	}
 
-	Monitor(PN pn) {
+	Monitor(PN pn, Policy policy) {
 		mPN = pn;
-		sharedLoadPolicy = new Policy(mPN);
+		this.policy = policy;
 
 		mLock = new ReentrantLock(true);
 		// create one condition per transition
@@ -39,7 +39,7 @@ public class Monitor {
 		mLock.lock();
 
 		try {
-			PN.Transitions t = sharedLoadPolicy.getBufferTransition();
+			PN.Transitions t = policy.getBufferTransition();
 			boolean firedStatus = fireTransitions(t);
 
 			return new BoolTransitionWrapper(firedStatus, t);

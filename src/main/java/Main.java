@@ -19,8 +19,8 @@ public class Main {
 	public static void main(String[] args) {
 		Date initTime;
 		PN pn = new PN(true);
-		Policy policy = new Policy(pn);
-		Monitor monitor = new Monitor(pn);
+		Policy mPolicy = new SharedLoadPolicy(pn);
+		Monitor monitor = new Monitor(pn, mPolicy);
 
 		Loger loger;
 
@@ -33,7 +33,7 @@ public class Main {
 		ConsumePendingFlag consumePendingFlag1 = new ConsumePendingFlag(monitor, TasksManager.CPUNumber.CPU1);
 		ConsumePendingFlag consumePendingFlag2 = new ConsumePendingFlag(monitor, TasksManager.CPUNumber.CPU2);
 
-		TaskDispatcher taskDispatcher = new TaskDispatcher(monitor, policy);
+		TaskDispatcher taskDispatcher = new TaskDispatcher(monitor);
 
 
 		List<Thread> threadList = Arrays.asList(tasksManager1, tasksManager2, cpuStateManager1, cpuStateManager2, taskDispatcher);

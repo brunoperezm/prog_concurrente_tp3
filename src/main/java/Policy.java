@@ -1,8 +1,12 @@
-class Policy {
+interface Policy {
+    public PN.Transitions getBufferTransition();
+}
+
+class SharedLoadPolicy implements Policy {
 
 	private PN mPN;
 
-	Policy(PN PN) {
+	SharedLoadPolicy(PN PN) {
 		mPN = PN;
 	}
 

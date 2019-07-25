@@ -1,14 +1,12 @@
 
 class TaskDispatcher extends  Thread {
-	private final Policy mPolicy;
 	Monitor mMonitor;
 
 	private int i1;
 	private int i2;
 
-	public TaskDispatcher(Monitor monitor, Policy policy) {
+	public TaskDispatcher(Monitor monitor) {
 		this.mMonitor = monitor;
-		this.mPolicy = policy;
 	}
 
 	@Override
