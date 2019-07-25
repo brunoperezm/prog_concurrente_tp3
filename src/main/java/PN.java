@@ -106,8 +106,11 @@ class PN {
 		CPU2_StandBy(11),
 		P0(12),
 		P1(13),
-		Z18(19),
-		ZP19(18);
+		P20(16),
+		P21(17),
+
+		Z18(20),
+		ZP19(21);
 
 		int position;
 		Places (int position) {
@@ -148,8 +151,9 @@ class PN {
 				new PInvariants(1, Places.P0, Places.P1),
 				new PInvariants(1, Places.c1_idle, Places.core1_active),
 				new PInvariants(1, Places.c2_idle, Places.core2_active),
-				new PInvariants(1, Places.CPU1_ON, Places.CPU1_PowerUp, Places.CPU1_StandBy, Places.Z18),
-				new PInvariants(1, Places.CPU2_ON, Places.CPU2_PowerUp, Places.CPU2_StandBy, Places.ZP19)};
+				new PInvariants(1, Places.CPU1_ON, Places.CPU1_PowerUp, Places.CPU1_StandBy, Places.Z18, Places.P20),
+				new PInvariants(1, Places.CPU2_ON, Places.CPU2_PowerUp, Places.CPU2_StandBy, Places.ZP19, Places.P21),
+		};
 		this.checkInvariants = checkInvariants;
 
 		double[][] incidenceMatrix = {
