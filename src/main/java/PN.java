@@ -208,7 +208,7 @@ class PN {
 
 	void fire(Transitions transition) {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
-		System.out.println("Marcado antes: " + getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
+		// System.out.println("Marcado antes: " + getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
 		mMarking =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		if(transition.isTemporized()) transition.setInitialTime(null);

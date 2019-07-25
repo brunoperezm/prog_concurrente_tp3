@@ -12,7 +12,7 @@ public class Main {
 	static int SERVICE_RATE_1_ALFA = 20;
 	static int SERVICE_RATE_1_BETA = 100;
 
-	static int SERVICE_RATE_2_ALFA = 80;
+	static int SERVICE_RATE_2_ALFA = 60;
 	static int SERVICE_RATE_2_BETA = 100;
 
 
@@ -71,6 +71,11 @@ public class Main {
 			taskDispatcher.join();
 			int elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
 			System.out.println(TOTAL_TASKS + " tareas despachadas en " + elapsedTime + " segundos.");
+			while (tasksManager1.getTotalTasksServed() + tasksManager2.getTotalTasksServed() < 1000);
+			elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
+			System.out.println(TOTAL_TASKS + " tareas servidas en " + elapsedTime + " segundos.");
+			tasksManager1.interrupt();
+			tasksManager2.interrupt();
 			loger.stop(elapsedTime);
 		} catch (InterruptedException e) {
 			e.printStackTrace();

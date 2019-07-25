@@ -10,12 +10,14 @@ class TasksManager extends Thread {
 
 	Queue<String> tasksBuffer;
 	Monitor mMonitor;
-	int alfa, beta;
+	int alfa, beta, total;
+
 	TasksManager(Monitor monitor, CPUNumber cpuNumber, int alfa, int beta) {
 		this.mMonitor = monitor;
 		this.mCPUNumber = cpuNumber;
 		this.alfa = alfa;
 		this.beta = beta;
+		this.total = 0;
 		this.setName("TastManager " + cpuNumber.toString());
 	}
 
@@ -31,8 +33,11 @@ class TasksManager extends Thread {
 
 	    	    // Infinite Loop
 		while (!interrupted()) {
+			this.total++;
 			mMonitor.fireTransitions(StartService);
 			mMonitor.fireTransitions(EndServiceRate);
 		}
 	}
+
+	public int getTotalTasksServed() { return this.total; }
 }
