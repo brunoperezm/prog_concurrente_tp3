@@ -11,10 +11,10 @@ public class Main {
 	static final int ARRIVAL_RATE_1_ALFA = 5;
 	static final int ARRIVAL_RATE_1_BETA = 20000000;
 
-	static final int SERVICE_RATE_1_ALFA = 100;
+	static final int SERVICE_RATE_1_ALFA = 10;
 	static final int SERVICE_RATE_1_BETA = 1000;
 
-	static final int SERVICE_RATE_2_ALFA = 100;
+	static final int SERVICE_RATE_2_ALFA = 10;
 	static final int SERVICE_RATE_2_BETA = 1000;
 
 
