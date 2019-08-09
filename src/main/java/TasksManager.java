@@ -4,13 +4,15 @@ import java.util.Random;
 class TasksManager extends Thread {
 	enum CPUNumber {
 		CPU1,
-		CPU2;
-	}
-	CPUNumber mCPUNumber;
+		CPU2
+    }
+	private final CPUNumber mCPUNumber;
 
 	Queue<String> tasksBuffer;
-	Monitor mMonitor;
-	int alfa, beta, total;
+	private final Monitor mMonitor;
+	private final int alfa;
+	private final int beta;
+	private int total;
 
 	TasksManager(Monitor monitor, CPUNumber cpuNumber, int alfa, int beta) {
 		this.mMonitor = monitor;

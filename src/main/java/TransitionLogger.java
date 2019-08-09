@@ -7,9 +7,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class TransitionLogger extends Thread {
 
-    ConcurrentLinkedQueue<String> transitionQueue = new ConcurrentLinkedQueue<>();
+    final ConcurrentLinkedQueue<String> transitionQueue = new ConcurrentLinkedQueue<>();
     private FileWriter file;
-    private String fileLocation;
+    private final String fileLocation;
     private PrintWriter pw;
 
     public TransitionLogger(String fileLocation) {

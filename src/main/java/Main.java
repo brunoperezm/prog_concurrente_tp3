@@ -6,16 +6,16 @@ import static java.lang.Thread.interrupted;
 
 public class Main {
 
-	static int TOTAL_TASKS = 500;
+	static final int TOTAL_TASKS = 1000;
 
-	static int ARRIVAL_RATE_1_ALFA = 5;
-	static int ARRIVAL_RATE_1_BETA = 20000000;
+	static final int ARRIVAL_RATE_1_ALFA = 5;
+	static final int ARRIVAL_RATE_1_BETA = 20000000;
 
-	static int SERVICE_RATE_1_ALFA = 20;
-	static int SERVICE_RATE_1_BETA = 100;
+	static final int SERVICE_RATE_1_ALFA = 100;
+	static final int SERVICE_RATE_1_BETA = 1000;
 
-	static int SERVICE_RATE_2_ALFA = 60;
-	static int SERVICE_RATE_2_BETA = 100;
+	static final int SERVICE_RATE_2_ALFA = 100;
+	static final int SERVICE_RATE_2_BETA = 1000;
 
 
 	public static void main(String[] args) {
@@ -74,7 +74,8 @@ public class Main {
 			int elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
 			System.out.println(TOTAL_TASKS + " tareas despachadas en " + elapsedTime + " segundos.");
 			while (tasksManager1.getTotalTasksServed() + tasksManager2.getTotalTasksServed() < TOTAL_TASKS) {
-				Thread.sleep(100);
+				Thread.sleep(1000);
+				System.out.print(".");
 			}
 			elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
 			System.out.println(TOTAL_TASKS + " tareas servidas en " + elapsedTime + " segundos.");

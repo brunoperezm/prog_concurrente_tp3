@@ -1,8 +1,8 @@
 class CPUStateManager extends Thread {
 
 
-	final TasksManager.CPUNumber mCPUNumber;
-	final Monitor mMonitor;
+	private final TasksManager.CPUNumber mCPUNumber;
+	private final Monitor mMonitor;
 	public CPUStateManager(Monitor monitor, TasksManager.CPUNumber cpu) {
 		mCPUNumber = cpu;
 		mMonitor = monitor;

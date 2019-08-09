@@ -1,6 +1,6 @@
 
 class TaskDispatcher extends  Thread {
-	Monitor mMonitor;
+	private final Monitor mMonitor;
 
 	private int i1;
 	private int i2;

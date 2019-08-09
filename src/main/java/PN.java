@@ -7,13 +7,13 @@ import java.util.Date;
 import java.util.List;
 
 public class PN {
-	private Array2DRowRealMatrix mIncidenceMatrix;
-	private Array2DRowRealMatrix mInhibitionMatrix;
+	private final Array2DRowRealMatrix mIncidenceMatrix;
+	private final Array2DRowRealMatrix mInhibitionMatrix;
 
 	private Array2DRowRealMatrix mMarking;
 
-	private PInvariants[] invariants;
-	private boolean checkInvariants;
+	private final PInvariants[] invariants;
+	private final boolean checkInvariants;
 	private boolean verbose;
 
 	public enum Transitions {
@@ -91,7 +91,7 @@ public class PN {
 		Z18(20),
 		ZP19(21);
 
-		int position;
+		final int position;
 		Places (int position) {
 			this.position = position;
 		}
@@ -104,7 +104,7 @@ public class PN {
 	class PInvariants {
 		final int invariant;
 
-		Places[] places;
+		final Places[] places;
 
 		PInvariants(int invariant, Places... places){
 			this.invariant = invariant;

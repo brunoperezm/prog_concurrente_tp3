@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Loger extends Thread {
 
-    private Monitor mMonitor;
-    private PN mPN;
-    private List<Thread> threadList;
+    private final Monitor mMonitor;
+    private final PN mPN;
+    private final List<Thread> threadList;
 
     private FileWriter file;
     private PrintWriter pw;
