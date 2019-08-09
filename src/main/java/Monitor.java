@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -11,6 +13,7 @@ public class Monitor {
 
 	private final Lock mLock;
 	private final HashMap<PN.Transitions, Condition> conditions = new HashMap<>();
+	private final ConcurrentLinkedQueue<String> transitionQueue;
 
 	class BoolTransitionWrapper {
 		final private boolean status;
@@ -26,9 +29,10 @@ public class Monitor {
 		public PN.Transitions getTransition() { return this.transition; }
 	}
 
-	Monitor(PN pn, Policy policy) {
+	Monitor(PN pn, Policy policy, ConcurrentLinkedQueue<String> transitionQueue) {
 		mPN = pn;
 		this.policy = policy;
+		this.transitionQueue = transitionQueue;
 
 		mLock = new ReentrantLock(true);
 		// create one condition per transition
@@ -50,7 +54,8 @@ public class Monitor {
 	}
 
 	/**
-	 * @return true if the transition could be fired, else otherwise */
+	 * @return true if the transition could be fired,
+     *         false if the thread has been interrupted */
 	public boolean fireTransitions(PN.Transitions transition) {
 		mLock.lock();
 		try {
@@ -69,6 +74,7 @@ public class Monitor {
 			}
 
 			mPN.fire(transition);
+			transitionQueue.add(transition.name());
 
 			// send a signal to all conditions with enabled transitions
 			for (PN.Transitions t: mPN.getEnabledTransitions()) conditions.get(t).signal();

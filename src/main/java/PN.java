@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-class PN {
+public class PN {
 	private Array2DRowRealMatrix mIncidenceMatrix;
 	private Array2DRowRealMatrix mInhibitionMatrix;
 
@@ -14,30 +14,9 @@ class PN {
 
 	private PInvariants[] invariants;
 	private boolean checkInvariants;
+	private boolean verbose;
 
-//	Arrival_rate
-//			c1_Service_start
-//	c1-Service_rate
-//			c2_Service_start
-//	c2-Service_rate
-//	CPU1-ConsumePendingTask
-//	CPU1-Power_down_threshold
-//	CPU1-Power_up_delay
-//	CPU1-ReturnPendingTask
-//	CPU1-StartBuffer
-//	CPU1-WakeUp
-//			CPU2_power_up_delay
-//	CPU2-ConsumePendingTask
-//	CPU2-Power_down_threshold
-//	CPU2-ReturnPendingTask
-//	CPU2-StartBuffer
-//	CPU2-WakeUp
-//			T19
-//	T20
-//			ZT17
-//	ZT18
-	// TODO: poner bien los transition codes
-	enum Transitions {
+	public enum Transitions {
 		ARRIVAL_RATE(Main.ARRIVAL_RATE_1_ALFA, Main.ARRIVAL_RATE_1_BETA), // arrival_rate h
 		START_SERVICE_1(), // T2 h
 		END_SERVICE_RATE_1(Main.SERVICE_RATE_1_ALFA, Main.SERVICE_RATE_1_BETA), // service_rate h
@@ -208,16 +187,18 @@ class PN {
 		mIncidenceMatrix = new Array2DRowRealMatrix(incidenceMatrix);
 		mInhibitionMatrix = new Array2DRowRealMatrix(inhibitionMatrix);
 		initInternalCounters();
+		System.out.println("Comenzando RdP...");
 	}
 
 	void fire(Transitions transition) {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
-		// System.out.println("Marcado antes: " + getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
+		if (verbose) System.out.println("Marcado antes: " + getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
 		mMarking =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		if(transition.isTemporized()) transition.setInitialTime(null);
 		initInternalCounters();
 		assert checkPInvariant();
+		if (verbose) System.out.println(transition+",");
 	}
 
 	private boolean checkPInvariant() {
@@ -237,6 +218,10 @@ class PN {
 	}
 
 	// WithTime
+	/**
+	 * @return 0 if transition is not enabled
+	 * 		   1 if transition is enabled and not temporized
+	 * 		   the (negative) remaining millis for timed transition to be enabled*/
 	int isTransitionEnabled(Transitions transition) {
 		Array2DRowRealMatrix matrix =
 				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));

@@ -18,7 +18,7 @@ class TasksManager extends Thread {
 		this.alfa = alfa;
 		this.beta = beta;
 		this.total = 0;
-		this.setName("TastManager " + cpuNumber.toString());
+		this.setName("TaskManager " + cpuNumber.toString());
 	}
 
 	@Override
@@ -31,7 +31,7 @@ class TasksManager extends Thread {
 				? PN.Transitions.END_SERVICE_RATE_1
 				: PN.Transitions.END_SERVICE_RATE_2;
 
-	    	    // Infinite Loop
+		// Infinite Loop
 		while (!interrupted()) {
 			this.total++;
 			mMonitor.fireTransitions(StartService);
@@ -39,5 +39,5 @@ class TasksManager extends Thread {
 		}
 	}
 
-	public int getTotalTasksServed() { return this.total; }
+	public int getTotalTasksServed() {return this.total; }
 }

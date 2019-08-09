@@ -2,11 +2,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static java.lang.Thread.interrupted;
+
 public class Main {
 
-	static int TOTAL_TASKS = 1000;
+	static int TOTAL_TASKS = 500;
 
-	static int ARRIVAL_RATE_1_ALFA = 10;
+	static int ARRIVAL_RATE_1_ALFA = 5;
 	static int ARRIVAL_RATE_1_BETA = 20000000;
 
 	static int SERVICE_RATE_1_ALFA = 20;
@@ -18,9 +20,11 @@ public class Main {
 
 	public static void main(String[] args) {
 		Date initTime;
+		TransitionLogger transitionLogger = new TransitionLogger("out/transitions.txt");
+		transitionLogger.start();
 		PN pn = new PN(true);
 		Policy mPolicy = new SharedLoadPolicy(pn);
-		Monitor monitor = new Monitor(pn, mPolicy);
+		Monitor monitor = new Monitor(pn, mPolicy, transitionLogger.transitionQueue);
 
 		Loger loger;
 
@@ -40,6 +44,8 @@ public class Main {
 		loger = new Loger(monitor, threadList, pn, "out/log.txt");
 		loger.start();
 
+
+
 		initTime = new Date();
 		taskDispatcher.start();
 		tasksManager1.start();
@@ -50,33 +56,38 @@ public class Main {
 		consumePendingFlag2.start();
 
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-					monitor.fireTransitions(PN.Transitions.ZT19);
-				}
+		Thread autoloopResolver1 = new Thread(() -> {
+			while (!interrupted()) {
+				monitor.fireTransitions(PN.Transitions.ZT19);
 			}
-		}).start();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (true) {
-					monitor.fireTransitions(PN.Transitions.ZT20);
-				}
+		});
+		autoloopResolver1.start();
+		Thread autoloopResolver2 = new Thread(() -> {
+			while (!interrupted()) {
+				monitor.fireTransitions(PN.Transitions.ZT20);
 			}
-		}).start();
+		});
+		autoloopResolver2.start();
 
 		try {
 			taskDispatcher.join();
 			int elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
 			System.out.println(TOTAL_TASKS + " tareas despachadas en " + elapsedTime + " segundos.");
-			while (tasksManager1.getTotalTasksServed() + tasksManager2.getTotalTasksServed() < 1000);
+			while (tasksManager1.getTotalTasksServed() + tasksManager2.getTotalTasksServed() < TOTAL_TASKS) {
+				Thread.sleep(100);
+			}
 			elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
 			System.out.println(TOTAL_TASKS + " tareas servidas en " + elapsedTime + " segundos.");
 			tasksManager1.interrupt();
 			tasksManager2.interrupt();
 			loger.stop(elapsedTime);
+			transitionLogger.interrupt();
+			autoloopResolver1.interrupt();
+			autoloopResolver2.interrupt();
+			consumePendingFlag1.interrupt();
+			consumePendingFlag2.interrupt();
+			cpuStateManager1.interrupt();
+			cpuStateManager2.interrupt();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

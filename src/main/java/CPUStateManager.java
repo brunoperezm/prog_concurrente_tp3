@@ -37,7 +37,7 @@ class CPUStateManager extends Thread {
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				Thread.currentThread().interrupt();
 			}
 			mMonitor.fireTransitions(PowerUpDelay);
 			mMonitor.fireTransitions(PowerDownThreshold);

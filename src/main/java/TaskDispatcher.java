@@ -4,6 +4,7 @@ class TaskDispatcher extends  Thread {
 
 	private int i1;
 	private int i2;
+	private boolean verbose;
 
 	public TaskDispatcher(Monitor monitor) {
 		this.mMonitor = monitor;
@@ -29,7 +30,7 @@ class TaskDispatcher extends  Thread {
 				if (cpuNumber.equals(TasksManager.CPUNumber.CPU1)) i1++;
 				else i2++;
 
-				System.out.println("Mande tarea: " + (i1 + i2) + " al buffer " + cpuNumber.toString());
+				if (verbose) System.out.println("Mande tarea: " + (i1 + i2) + " al buffer " + cpuNumber.toString());
 			}
 
 			if(i1 + i2 >= Main.TOTAL_TASKS) {

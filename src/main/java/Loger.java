@@ -67,7 +67,9 @@ public class Loger extends Thread {
 
         printInvariants(pw);
 
-        pw.printf("Buffers Loads:\n");
+        pw.printf("Buffers Loads: B1: %d  B2: %d\n",
+                mPN.getPlaceTokens(PN.Places.Buffer1),
+                mPN.getPlaceTokens(PN.Places.Buffer2));
 
         pw.printf("Threads States:\n");
         for (Thread c: threadList) {
