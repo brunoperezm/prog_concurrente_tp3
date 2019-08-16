@@ -9,6 +9,7 @@ $(document).ready(function () {
         let reader = new FileReader();
 
         reader.onload = function (e) {
+            display.empty();
             let contents = e.target.result;
             hidden.append(contents);
 
