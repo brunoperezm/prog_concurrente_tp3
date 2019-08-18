@@ -8,17 +8,33 @@ public class Main {
 
 	static final int TOTAL_TASKS = 1000;
 
-	static final int ARRIVAL_RATE_1_ALFA = 5;
+	static int ARRIVAL_RATE_1_ALFA = 5;
 	static final int ARRIVAL_RATE_1_BETA = 20000000;
 
-	static final int SERVICE_RATE_1_ALFA = 10;
+	static int SERVICE_RATE_1_ALFA = 10;
 	static final int SERVICE_RATE_1_BETA = 1000;
 
-	static final int SERVICE_RATE_2_ALFA = 10;
+	static int SERVICE_RATE_2_ALFA = 10;
 	static final int SERVICE_RATE_2_BETA = 1000;
 
 
 	public static void main(String[] args) {
+		try{
+			switch(args.length){
+				case 3:
+					SERVICE_RATE_1_ALFA = Integer.parseInt(args[1]);
+					SERVICE_RATE_2_ALFA = Integer.parseInt(args[2]);
+				case 1:
+					ARRIVAL_RATE_1_ALFA = Integer.parseInt(args[0]);
+					break;
+			}
+		}
+		catch (NumberFormatException e){
+			System.out.println("Error en argumento... utilizando argumentos por defecto.");
+			ARRIVAL_RATE_1_ALFA = 5;
+			SERVICE_RATE_1_ALFA = 10;
+			SERVICE_RATE_2_ALFA = 10;
+		}
 		Date initTime;
 		TransitionLogger transitionLogger = new TransitionLogger("out/transitions.txt");
 		transitionLogger.start();

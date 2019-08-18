@@ -187,7 +187,12 @@ public class PN {
 		mIncidenceMatrix = new Array2DRowRealMatrix(incidenceMatrix);
 		mInhibitionMatrix = new Array2DRowRealMatrix(inhibitionMatrix);
 		initInternalCounters();
-		System.out.println("Comenzando RdP...");
+		System.out.printf(
+			"Comenzando RdP... AR: %d; SR1: %d; SR2: %d;\n",
+			Transitions.ARRIVAL_RATE.alfa,
+			Transitions.END_SERVICE_RATE_1.alfa,
+			Transitions.END_SERVICE_RATE_2.alfa
+		);
 	}
 
 	void fire(Transitions transition) {
