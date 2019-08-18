@@ -24,7 +24,7 @@ $(document).ready(function () {
     }
 
     function parseTransition(el) {
-        display.append("<H1>TRANSICIONES</H1>");
+        display.append("<h3>Transitions</h3>");
 
         $("table", el).first().find(".cell .colhead").
             each(function (index) {
@@ -33,7 +33,7 @@ $(document).ready(function () {
     }
 
     function parsePlaces(el) {
-        display.append("<H1>PLAZAS</H1>");
+        display.append("<h3>Places</h3>");
 
         $("table", el).first().find(".cell tbody .rowhead").
             each( function (i) {
@@ -48,8 +48,9 @@ $(document).ready(function () {
 
             // nombre de cada matriz
             let title = tableItem.find(".colhead").first().text().trim();
-            if (title !== "Arrival_rate" && title !== "Active_N1")
-                display.append("<H1>" + title + "</H1>");
+            // revisar esto
+            if (title.toLowerCase() !== "arrival_rate" && title.toLowerCase() !== "active_n1")
+                display.append("<h3>" + title + "</h3>");
 
             rows.each(function (i) {
                 if (i === 0) return;
