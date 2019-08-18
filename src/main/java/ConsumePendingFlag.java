@@ -11,19 +11,15 @@ class ConsumePendingFlag extends Thread {
 
     @Override
     public void run() {
-        PN.Transitions ConsumePendingTask1;
-        PN.Transitions ConsumePendingTask2;
+        PN.Transitions consumePendingTask1;
         if(mCPUNumber.equals(TasksManager.CPUNumber.CPU1)) {
-            ConsumePendingTask1 = PN.Transitions.CONSUME_PENDING_TASK_TOKEN_1;
-            ConsumePendingTask2 = PN.Transitions.ZT17;
+            consumePendingTask1 = PN.Transitions.CONSUME_PENDING_TASK_TOKEN_1;
 
         } else {
-            ConsumePendingTask1 = PN.Transitions.CONSUME_PENDING_TASK_TOKEN_2;
-            ConsumePendingTask2 = PN.Transitions.ZT18;
+            consumePendingTask1 = PN.Transitions.CONSUME_PENDING_TASK_TOKEN_2;
         }
         while(!interrupted()) {
-            mMonitor.fireTransitions(ConsumePendingTask1);
-            mMonitor.fireTransitions(ConsumePendingTask2);
+            mMonitor.fireTransitions(consumePendingTask1);
         }
     }
 }

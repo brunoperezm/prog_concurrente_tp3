@@ -11,8 +11,8 @@ class SharedLoadPolicy implements Policy {
 	}
 
 	public PN.Transitions getBufferTransition() {
-		int buffer1Tokens = mPN.getPlaceTokens(PN.Places.Buffer1);
-		int buffer2Tokens = mPN.getPlaceTokens(PN.Places.Buffer2);
+		int buffer1Tokens = mPN.getPlaceTokens(PN.Places.CORE1_BUFFER);
+		int buffer2Tokens = mPN.getPlaceTokens(PN.Places.CORE2_BUFFER);
 
 		return (buffer1Tokens > buffer2Tokens)
 				? PN.Transitions.START_BUFFER_2

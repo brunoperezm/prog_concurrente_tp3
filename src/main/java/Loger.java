@@ -68,8 +68,8 @@ public class Loger extends Thread {
         printInvariants(pw);
 
         pw.printf("Buffers Loads: B1: %d  B2: %d\n",
-                mPN.getPlaceTokens(PN.Places.Buffer1),
-                mPN.getPlaceTokens(PN.Places.Buffer2));
+                mPN.getPlaceTokens(PN.Places.CORE1_BUFFER),
+                mPN.getPlaceTokens(PN.Places.CORE2_BUFFER));
 
         pw.printf("Threads States:\n");
         for (Thread c: threadList) {
@@ -83,11 +83,11 @@ public class Loger extends Thread {
         //1
         pw.printf("P0(%d) + P1(%d) = 1\n", mPN.getPlaceTokens(PN.Places.P0), mPN.getPlaceTokens(PN.Places.P1));
         //2
-        pw.printf("c1-idle(%d) + core1-active(%d) = 1\n", mPN.getPlaceTokens(PN.Places.c1_idle), mPN.getPlaceTokens(PN.Places.core1_active));
-        pw.printf("c2-idle(%d) + core2-active(%d) = 1\n", mPN.getPlaceTokens(PN.Places.c2_idle), mPN.getPlaceTokens(PN.Places.core2_active));
+        pw.printf("c1-idle(%d) + core1-active(%d) = 1\n", mPN.getPlaceTokens(PN.Places.C1_IDLE), mPN.getPlaceTokens(PN.Places.CORE1_ACTIVE));
+        pw.printf("c2-idle(%d) + core2-active(%d) = 1\n", mPN.getPlaceTokens(PN.Places.C2_IDLE), mPN.getPlaceTokens(PN.Places.CORE2_ACTIVE));
         //3
-        pw.printf("CPU1_ON(%d) + CPU1-Power_up(%d) + CPU1-Stand_by(%d) = 1\n", mPN.getPlaceTokens(PN.Places.CPU1_ON), mPN.getPlaceTokens(PN.Places.CPU1_PowerUp), mPN.getPlaceTokens(PN.Places.CPU1_StandBy));
-        pw.printf("CPU2_ON(%d) + CPU2-Power_up(%d) + CPU2-Stand_by(%d) = 1\n", mPN.getPlaceTokens(PN.Places.CPU2_ON), mPN.getPlaceTokens(PN.Places.CPU2_PowerUp), mPN.getPlaceTokens(PN.Places.CPU2_StandBy));
+        pw.printf("CPU1_ON(%d) + CPU1-Power_up(%d) + CPU1-Stand_by(%d) = 1\n", mPN.getPlaceTokens(PN.Places.CPU1_ON), mPN.getPlaceTokens(PN.Places.CPU1_POWER_UP), mPN.getPlaceTokens(PN.Places.CPU1_STAND_BY));
+        pw.printf("CPU2_ON(%d) + CPU2-Power_up(%d) + CPU2-Stand_by(%d) = 1\n", mPN.getPlaceTokens(PN.Places.CPU2_ON), mPN.getPlaceTokens(PN.Places.CPU2_POWER_UP), mPN.getPlaceTokens(PN.Places.CPU2_STAND_BY));
     }
 
     public void stop(int elapsedTime) {

@@ -66,18 +66,7 @@ public class Main {
 		consumePendingFlag2.start();
 
 
-		Thread autoloopResolver1 = new Thread(() -> {
-			while (!interrupted()) {
-				monitor.fireTransitions(PN.Transitions.ZT19);
-			}
-		});
-		autoloopResolver1.start();
-		Thread autoloopResolver2 = new Thread(() -> {
-			while (!interrupted()) {
-				monitor.fireTransitions(PN.Transitions.ZT20);
-			}
-		});
-		autoloopResolver2.start();
+
 
 		try {
 			taskDispatcher.join();
@@ -93,8 +82,6 @@ public class Main {
 			tasksManager2.interrupt();
 			loger.stop(elapsedTime);
 			transitionLogger.interrupt();
-			autoloopResolver1.interrupt();
-			autoloopResolver2.interrupt();
 			consumePendingFlag1.interrupt();
 			consumePendingFlag2.interrupt();
 			cpuStateManager1.interrupt();
