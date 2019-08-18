@@ -28,8 +28,18 @@ public class Main {
 
 		Loger loger;
 
-		TasksManager tasksManager1 = new TasksManager(monitor, TasksManager.CPUNumber.CPU1, SERVICE_RATE_1_ALFA, SERVICE_RATE_1_BETA);
-		TasksManager tasksManager2 = new TasksManager(monitor, TasksManager.CPUNumber.CPU2, SERVICE_RATE_1_ALFA, SERVICE_RATE_2_BETA);
+		TasksManager tasksManager1 = new TasksManager(
+			monitor,
+			TasksManager.CPUNumber.CPU1,
+			SERVICE_RATE_1_ALFA,
+			SERVICE_RATE_1_BETA
+		);
+		TasksManager tasksManager2 = new TasksManager(
+			monitor,
+			TasksManager.CPUNumber.CPU2,
+			SERVICE_RATE_2_ALFA,
+			SERVICE_RATE_2_BETA
+		);
 
 		CPUStateManager cpuStateManager1 = new CPUStateManager(monitor, TasksManager.CPUNumber.CPU1);
 		CPUStateManager cpuStateManager2 = new CPUStateManager(monitor, TasksManager.CPUNumber.CPU2);
