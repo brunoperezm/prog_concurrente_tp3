@@ -103,5 +103,8 @@ public class Main {
 			e.printStackTrace();
 		}
 
+		TInvariantConsumer detector = new TInvariantConsumer();
+		detector.mainCheck();
+
 	}
 }
