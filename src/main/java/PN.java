@@ -134,7 +134,7 @@ public class PN {
 			{0,1,0,0,0,0,0,1,0,0,0,1,0,0,0}, // CPU1_ON
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,1,0}, // CPU1_POWER_UP
 			{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0}, // CPU1_STAND_BY
-			{0,0,1,0,0,0,0,0,1,0,0,0,0,0,0}, // CPU2_ON
+			{0,0,1,0,0,0,0,0,1,0,0,0,1,0,0}, // CPU2_ON
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}, // CPU2_POWER_UP
 			{0,0,0,0,0,0,1,0,0,0,0,0,0,0,0}, // CPU2_STAND_BY
 			{0,0,0,0,0,0,0,0,0,1,1,0,0,0,0}, // P0
@@ -196,7 +196,8 @@ public class PN {
 		if(transition.isTemporized()) transition.setInitialTime(null);
 		initInternalCounters();
 		assert checkPInvariant();
-		if (verbose) System.out.println(transition+",");
+		//if (verbose) System.out.println("Marcado desp.: " + getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
+		//if (verbose) System.out.println("-------------------------------");
 	}
 
 	private boolean checkPInvariant() {
@@ -222,7 +223,7 @@ public class PN {
 	 * 		   the (negative) remaining millis for timed transition to be enabled*/
 	int isTransitionEnabled(Transitions transition) {
 		Array2DRowRealMatrix matrix =
-				mMarking.add(new Array2DRowRealMatrix(mBackwardsIncidenceMatrix.getColumn(transition.getTransitionCode())));
+				mMarking.subtract(new Array2DRowRealMatrix(mBackwardsIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		for (int i = 0; i<matrix.getRowDimension(); i++) {
 			if (matrix.getRow(i)[0] < 0)  {
 				return 0;
@@ -257,7 +258,7 @@ public class PN {
 
 	private boolean isTransitionEnabledWithoutTime(Transitions transition) {
 		Array2DRowRealMatrix matrix =
-				mMarking.add(new Array2DRowRealMatrix(mBackwardsIncidenceMatrix.getColumn(transition.getTransitionCode())));
+				mMarking.subtract(new Array2DRowRealMatrix(mBackwardsIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		for (int i = 0; i<matrix.getRowDimension(); i++) {
 			if (matrix.getRow(i)[0] < 0) return false;
 		}
