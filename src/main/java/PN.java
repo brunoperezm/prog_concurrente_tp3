@@ -16,7 +16,7 @@ public class PN {
 
 	private final PInvariants[] invariants;
 	private final boolean checkInvariants;
-	private boolean verbose = true;
+	private boolean verbose = false;
 
 	public enum Transitions {
 		ARRIVAL_RATE(Main.ARRIVAL_RATE_1_ALFA, Main.ARRIVAL_RATE_1_BETA),

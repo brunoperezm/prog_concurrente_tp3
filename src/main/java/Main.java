@@ -77,7 +77,7 @@ public class Main {
 				System.out.print(".");
 			}
 			elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
-			System.out.println(TOTAL_TASKS + " tareas servidas en " + elapsedTime + " segundos.");
+			System.out.println("\n" + TOTAL_TASKS + " tareas servidas en " + elapsedTime + " segundos.");
 			tasksManager1.interrupt();
 			tasksManager2.interrupt();
 			loger.stop(elapsedTime);
