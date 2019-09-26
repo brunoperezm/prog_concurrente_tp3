@@ -31,7 +31,7 @@ public class TransitionLogger extends Thread {
 
         while(!interrupted()) {
             String s = transitionQueue.poll();
-            if (s != null) pw.printf(s+",");
+            if (s != null) pw.printf(s+"\n");
             else {
                 try {
                     Thread.sleep(250);
