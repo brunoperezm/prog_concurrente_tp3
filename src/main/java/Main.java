@@ -20,7 +20,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		Date initTime;
-		TransitionLogger transitionLogger = new TransitionLogger("out/transitions.txt");
+		TransitionLogger transitionLogger = new TransitionLogger("out\\transitions.txt");
 		transitionLogger.start();
 		PN pn = new PN(true);
 		Policy mPolicy = new SharedLoadPolicy(pn);
@@ -51,7 +51,7 @@ public class Main {
 
 
 		List<Thread> threadList = Arrays.asList(tasksManager1, tasksManager2, cpuStateManager1, cpuStateManager2, taskDispatcher);
-		loger = new Loger(monitor, threadList, pn, "out/log.txt");
+		loger = new Loger(monitor, threadList, pn, "out\\log.txt");
 		loger.start();
 
 
