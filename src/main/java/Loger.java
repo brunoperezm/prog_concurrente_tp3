@@ -1,7 +1,11 @@
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import sun.java2d.pipe.SpanShapeRenderer;
 
 
 public class Loger extends Thread {
@@ -24,6 +28,8 @@ public class Loger extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss '-' yyyy-MM-dd ");
+        pw.println("Inicio del log - " + sdf.format(new Date()));
     }
 
     @Override
