@@ -6,7 +6,7 @@ import static java.lang.Thread.interrupted;
 
 public class Main {
 
-	static final int TOTAL_TASKS = 1000;
+	static final int TOTAL_TASKS = 100;
 
 	static final int ARRIVAL_RATE_1_ALFA = 1;
 	static final int ARRIVAL_RATE_1_BETA = 20000000;
@@ -16,6 +16,8 @@ public class Main {
 
 	static final int SERVICE_RATE_2_ALFA = 20;
 	static final int SERVICE_RATE_2_BETA = 1000;
+
+	static final int LOG_RATE_SECONDS = 100;
 
 
 	public static void main(String[] args) {

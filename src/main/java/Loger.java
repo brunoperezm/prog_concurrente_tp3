@@ -34,7 +34,7 @@ public class Loger extends Thread {
 
     @Override
     public void run() {
-        int each = 2; //how many seconds between iterations
+        int each = Main.LOG_RATE_SECONDS; //how many milliseconds between iterations
         int i = 0;
         try{
             while(true){
@@ -42,7 +42,7 @@ public class Loger extends Thread {
                 log(each, i);
 
                 //Sleep 'each' seconds
-                Thread.sleep(each * 1000);
+                Thread.sleep(each);
                 i++;
             }
         } catch (InterruptedException e) {
@@ -63,7 +63,7 @@ public class Loger extends Thread {
     private void log(int each, int i, boolean last) {
         i += last? 1 : 0;
         pw.printf("________________________________\n");
-        pw.printf("Time:%s %d seconds.\n", last? " just under" : "", each*i);
+        pw.printf("Time:%s %d milliseconds.\n", last? " just under" : "", each*i);
 
         pw.printf("\n");
 
@@ -82,7 +82,7 @@ public class Loger extends Thread {
             pw.printf(" Name: %s\tState: %s\n", c.getName(), c.getState());
         }
 
-        pw.printf("\n%s", last? " \nExecution completed in less than "+each*i+" seconds." : "");
+        pw.printf("\n%s", last? " \nExecution completed in less than "+each*i+" milliseconds." : "");
     }
     private void printInvariants(PrintWriter pw){
         pw.printf("Invariants: \n");
