@@ -2,40 +2,29 @@ import re
 import numpy as np
 
 
-patterns = [
-    "ARRIVAL_RATE,(([A-Z_0-9]*,)*?)START_BUFFER_1,(([A-Z_0-9]*,)*?)START_SERVICE_1,(([A-Z_0-9]*,)*?)END_SERVICE_RATE_1,(([A-Z_0-9]*,)*?)ZT19,(([A-Z_0-9]*,)*?)CONSUME_PENDING_TASK_TOKEN_1,(([A-Z_0-9]*,)*?)ZT17",
-    #"ARRIVAL_RATE,(([A-Z_0-9]*,)*?)START_BUFFER_1,(([A-Z_0-9]*,)*?)WAKE_UP_1,(([A-Z_0-9]*,)*?)RETURN_PENDING_TASK_1,(([A-Z_0-9]*,)*?)POWER_UP_DELAY_1,(([A-Z_0-9]*,)*?)START_SERVICE_1,(([A-Z_0-9]*,)*?)ZT19,(([A-Z_0-9]*,)*?)END_SERVICE_RATE_1,(([A-Z_0-9]*,)*?)POWER_DOWN_THRESHOLD_1",
-    "ARRIVAL_RATE,(([A-Z_0-9]*,)*?)START_BUFFER_2,(([A-Z_0-9]*,)*?)START_SERVICE_2,(([A-Z_0-9]*,)*?)END_SERVICE_RATE_2,(([A-Z_0-9]*,)*?)ZT20,(([A-Z_0-9]*,)*?)CONSUME_PENDING_TASK_TOKEN_2,(([A-Z_0-9]*,)*?)ZT18"
-    #"ARRIVAL_RATE,(([A-Z_0-9]*,)*?)START_BUFFER_2,(([A-Z_0-9]*,)*?)WAKE_UP_2,(([A-Z_0-9]*,)*?)RETURN_PENDING_TASK_2,(([A-Z_0-9]*,)*?)POWER_UP_DELAY_2,(([A-Z_0-9]*,)*?)START_SERVICE_2,(([A-Z_0-9]*,)*?)ZT20,(([A-Z_0-9]*,)*?)END_SERVICE_RATE_2,(([A-Z_0-9]*,)*?)POWER_DOWN_THRESHOLD_2"
-]
+
+pattern = "ARRIVAL_RATE,(.*?)START_BUFFER_1,(.*?)(?:START_SERVICE_1,(.*?)(?:END_SERVICE_RATE_1,(.*?)CONSUME_PENDING_TASK_TOKEN_1|CONSUME_PENDING_TASK_TOKEN_1,(.*?)END_SERVICE_RATE_1)|CONSUME_PENDING_TASK_TOKEN_1,(.*?)START_SERVICE_1,(.*?)END_SERVICE_RATE_1)"
 
 
+transitions_file = open("out/transitions.txt", "r").read()
+
+# Intento 1 match, no_of_matches = re.subn(pattern, '\g<2>', transitions_file)
+
+resultado = ""
+no_of_matches = 0
+
+match = re.match(pattern,transitions_file)
+while (match):
+    for group in match.groups():
+        if group is not None:
+            resultado += group
+    no_of_matches += 1
+    match = re.match(pattern,resultado)
+
+
+print ("El resultado de reemplazar los grupos es: " + resultado + "\n")
+print ("La cantidad de matches fue: " + str(no_of_matches))
 """
-
-ARRIVAL_RATE
-START_BUFFER_1
-CONSUME_PENDING_TASK_TOKEN_1
-START_SERVICE_1
-END_SERVICE_RATE_1
-
-ARRIVAL_RATE
-START_BUFFER_1
-START_SERVICE_1
-CONSUME_PENDING_TASK_TOKEN_1
-END_SERVICE_RATE_1
-
-
-ARRIVAL_RATE
-START_BUFFER_1
-START_SERVICE_1
-END_SERVICE_RATE_1
-CONSUME_PENDING_TASK_TOKEN_1
-
-
-"""
-
-
-file = open("out/transitions.txt", "r").read()
 for x in range(1, 1500):
     print(x)
     match_starts = []
@@ -64,3 +53,4 @@ for x in range(1, 1500):
         write_file.close()
     else:
         break
+"""
