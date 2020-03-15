@@ -2,8 +2,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static java.lang.Thread.interrupted;
-
 public class Main {
 
 	static final int TOTAL_TASKS = 100;
@@ -92,8 +90,7 @@ public class Main {
 			e.printStackTrace();
 		}
 
-		TInvariantConsumer detector = new TInvariantConsumer();
-		detector.mainCheck();
+		new TInvariantChecker().runScript();
 
 	}
 }
