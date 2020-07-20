@@ -5,20 +5,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import sun.java2d.pipe.SpanShapeRenderer;
 
 
 public class Loger extends Thread {
 
-    private final Monitor mMonitor;
     private final PN mPN;
     private final List<Thread> threadList;
 
     private FileWriter file;
     private PrintWriter pw;
 
-    public Loger(Monitor mMonitor, List<Thread> threadList, PN mPN,String fileLocation) {
-        this.mMonitor = mMonitor;
+    Loger(List<Thread> threadList, PN mPN, String fileLocation) {
         this.mPN = mPN;
         this.threadList = threadList;
 
@@ -34,7 +31,7 @@ public class Loger extends Thread {
 
     @Override
     public void run() {
-        int each = Main.LOG_RATE_SECONDS; //how many milliseconds between iterations
+        int each = Main.LOG_RATE_MILLISECONDS; //how many milliseconds between iterations
         int i = 0;
         try{
             while(true){
@@ -82,7 +79,7 @@ public class Loger extends Thread {
             pw.printf(" Name: %s\tState: %s\n", c.getName(), c.getState());
         }
 
-        pw.printf("\n%s", last? " \nExecution completed in less than "+each*i+" milliseconds." : "");
+        pw.printf("\n%s", last? " \nSe completó la ejecución en "+each*i+" milisegundos." : "");
     }
     private void printInvariants(PrintWriter pw){
         pw.printf("Invariants: \n");
@@ -96,8 +93,5 @@ public class Loger extends Thread {
         pw.printf("CPU2_ON(%d) + CPU2-Power_up(%d) + CPU2-Stand_by(%d) = 1\n", mPN.getPlaceTokens(PN.Places.CPU2_ON), mPN.getPlaceTokens(PN.Places.CPU2_POWER_UP), mPN.getPlaceTokens(PN.Places.CPU2_STAND_BY));
     }
 
-    public void stop(int elapsedTime) {
-        this.interrupt();
-    }
 }
 
