@@ -14,6 +14,7 @@ public class Loger extends Thread {
 
     private FileWriter file;
     private PrintWriter pw;
+    private int logRate = Main.LOG_RATE_MILLISECONDS; //how many milliseconds between iterations
 
     Loger(List<Thread> threadList, PN mPN, String fileLocation) {
         this.mPN = mPN;
@@ -31,20 +32,19 @@ public class Loger extends Thread {
 
     @Override
     public void run() {
-        int each = Main.LOG_RATE_MILLISECONDS; //how many milliseconds between iterations
         int i = 0;
         try{
             while(true){
                 //Log
-                log(each, i);
+                log(logRate, i);
 
-                //Sleep 'each' seconds
-                Thread.sleep(each);
+                //Sleep 'logRate' seconds
+                Thread.sleep(logRate);
                 i++;
             }
         } catch (InterruptedException e) {
             System.out.println("Loger detenido.");
-            log(each, i, true);
+            log(logRate, i, true);
         } finally {
             //Closing file
             try {
