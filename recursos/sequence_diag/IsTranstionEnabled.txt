@@ -1,0 +1,38 @@
+
+actor Monitor
+
+
+
+
+participant PN
+participant Lock
+
+
+
+
+Monitor->PN: isTransitionEnabled(t)
+activate PN
+PN->PN: matrix = marcado + columna incidencia
+alt matrix no tiene elementos negativos
+PN->PN: inhibition = marcado * columna inhibición
+alt inhibition == 0
+alt t.isTemporized()
+PN->PN: elapsed = Date().getTime() - t.getInitialTime().getTime()
+alt elapsed >= alfa
+alt elapsed <= beta 
+PN-->Monitor: enabled = 1
+else 
+PN-->Monitor: enabled = 0
+end
+else 
+PN-->Monitor: enabled = elapsed - alfa
+end
+else 
+PN-->Monitor: enabled = 1
+end
+else inhibition != 0
+PN-->Monitor: enabled = 0
+end
+else matrix tiene elementos negativos
+Monitor<--PN: enabled = 0	
+end
