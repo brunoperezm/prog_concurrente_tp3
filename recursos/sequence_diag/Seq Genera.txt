@@ -1,0 +1,85 @@
+actor TaskDispatcherThread
+participant Monitor
+
+participant Conditions
+participant PN
+participant Lock
+participant Policy
+
+activate TaskDispatcherThread
+TaskDispatcherThread->Monitor: fireTransitions(ARRIVAL_RATE)
+activate Monitor
+activate Lock
+Monitor->Lock: lock()
+Monitor->PN: isTransitionEnabled(t)
+activate PN
+PN->PN: matrix = marcado + columna incidencia
+alt matrix no tiene elementos negativos
+PN->PN: inhibition = marcado * columna inhibición
+alt inhibition == 0
+alt t.isTemporized()
+PN->PN: elapsed = Date().getTime() - t.getInitialTime().getTime()
+alt elapsed >= alfa
+alt elapsed <= beta 
+PN-->Monitor: enabled = 1
+else 
+PN-->Monitor: enabled = 0
+end
+else 
+PN-->Monitor: enabled = elapsed - alfa
+end
+else 
+PN-->Monitor: enabled = 1
+end
+else inhibition != 0
+PN-->Monitor: enabled = 0
+end
+else matrix tiene elementos negativos
+PN-->Monitor: enabled = 0	
+end
+loop enabled != 1
+alt isTemporized && enabled < 0
+activate Conditions
+Monitor->Conditions: get(t).await(-1 * enabled, MILLISECONDS)
+deactivate Conditions
+else 
+activate Conditions
+Monitor->Conditions: get(t).await()
+deactivate Conditions
+end 
+end
+
+Monitor->PN: fire(t)
+
+
+Monitor->PN: getEnabledTransitions()
+PN-->Monitor: transitions
+
+loop transitions
+Monitor->Conditions: get(t).signal()
+end 
+
+Monitor->Lock: unlock()
+Monitor-->TaskDispatcherThread: true
+
+TaskDispatcherThread->Monitor: taskDispatch()
+
+Monitor->Monitor: lock()
+
+activate Policy
+Monitor->Policy: getBufferTransition()
+Policy->PN: getPlaceTokens(Buffer1)
+PN-->Policy: buffer1Tokens
+Policy->PN: getPlaceTokens(Buffer2)
+PN-->Policy: buffer2Tokens
+
+alt buffer1Tokens > buffer2Tokens
+Policy-->Monitor: transition = Buffer2
+else 
+Policy-->Monitor: transition = Buffer1
+end
+deactivate Policy
+Monitor->Monitor: fireTransitions(transition)
+Monitor->Monitor: unlock()
+
+Monitor-->TaskDispatcherThread: 

@@ -19,13 +19,11 @@ class CPUStateManager extends Thread {
 
 		if(mCPUNumber.equals(TasksManager.CPUNumber.CPU1)){
 			WakeUp = PN.Transitions.WAKE_UP_1;
-			ReturnPendingTask = PN.Transitions.RETURN_PENDING_TASK_1;
 			PowerUpDelay = PN.Transitions.POWER_UP_DELAY_1;
 			PowerDownThreshold = PN.Transitions.POWER_DOWN_THRESHOLD_1;
 		}
 		else {
 			WakeUp = PN.Transitions.WAKE_UP_2;
-			ReturnPendingTask = PN.Transitions.RETURN_PENDING_TASK_2;
 			PowerUpDelay = PN.Transitions.POWER_UP_DELAY_2;
 			PowerDownThreshold = PN.Transitions.POWER_DOWN_THRESHOLD_2;
 		}
@@ -33,7 +31,6 @@ class CPUStateManager extends Thread {
 		// Infinity Loop
 		while (!interrupted()) {
 			mMonitor.fireTransitions(WakeUp);
-			mMonitor.fireTransitions(ReturnPendingTask);
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {

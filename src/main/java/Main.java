@@ -2,25 +2,25 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static java.lang.Thread.interrupted;
-
 public class Main {
 
-	static final int TOTAL_TASKS = 1000;
+	static final int TOTAL_TASKS = 10;
 
-	static final int ARRIVAL_RATE_1_ALFA = 5;
+	static final int ARRIVAL_RATE_1_ALFA = 50;
 	static final int ARRIVAL_RATE_1_BETA = 20000000;
 
-	static final int SERVICE_RATE_1_ALFA = 10;
-	static final int SERVICE_RATE_1_BETA = 1000;
+	static final int SERVICE_RATE_1_ALFA = 1;
+	static final int SERVICE_RATE_1_BETA = 10000000;
 
 	static final int SERVICE_RATE_2_ALFA = 10;
-	static final int SERVICE_RATE_2_BETA = 1000;
+	static final int SERVICE_RATE_2_BETA = 10000000;
+
+	static final int LOG_RATE_MILLISECONDS = 1;
 
 
 	public static void main(String[] args) {
 		Date initTime;
-		TransitionLogger transitionLogger = new TransitionLogger("out/transitions.txt");
+		TransitionLogger transitionLogger = new TransitionLogger("out\\transitions.txt");
 		transitionLogger.start();
 		PN pn = new PN(true);
 		Policy mPolicy = new SharedLoadPolicy(pn);
@@ -30,15 +30,11 @@ public class Main {
 
 		TasksManager tasksManager1 = new TasksManager(
 			monitor,
-			TasksManager.CPUNumber.CPU1,
-			SERVICE_RATE_1_ALFA,
-			SERVICE_RATE_1_BETA
+			TasksManager.CPUNumber.CPU1
 		);
 		TasksManager tasksManager2 = new TasksManager(
 			monitor,
-			TasksManager.CPUNumber.CPU2,
-			SERVICE_RATE_2_ALFA,
-			SERVICE_RATE_2_BETA
+			TasksManager.CPUNumber.CPU2
 		);
 
 		CPUStateManager cpuStateManager1 = new CPUStateManager(monitor, TasksManager.CPUNumber.CPU1);
@@ -51,7 +47,7 @@ public class Main {
 
 
 		List<Thread> threadList = Arrays.asList(tasksManager1, tasksManager2, cpuStateManager1, cpuStateManager2, taskDispatcher);
-		loger = new Loger(monitor, threadList, pn, "out/log.txt");
+		loger = new Loger(threadList, pn, "out\\log.txt");
 		loger.start();
 
 
@@ -66,35 +62,22 @@ public class Main {
 		consumePendingFlag2.start();
 
 
-		Thread autoloopResolver1 = new Thread(() -> {
-			while (!interrupted()) {
-				monitor.fireTransitions(PN.Transitions.ZT19);
-			}
-		});
-		autoloopResolver1.start();
-		Thread autoloopResolver2 = new Thread(() -> {
-			while (!interrupted()) {
-				monitor.fireTransitions(PN.Transitions.ZT20);
-			}
-		});
-		autoloopResolver2.start();
+
 
 		try {
 			taskDispatcher.join();
-			int elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
+			double elapsedTime = (new Date().getTime() - initTime.getTime()) / 1000.0;
 			System.out.println(TOTAL_TASKS + " tareas despachadas en " + elapsedTime + " segundos.");
 			while (tasksManager1.getTotalTasksServed() + tasksManager2.getTotalTasksServed() < TOTAL_TASKS) {
-				Thread.sleep(1000);
+				Thread.sleep(LOG_RATE_MILLISECONDS);
 				System.out.print(".");
 			}
-			elapsedTime = (int) (new Date().getTime() - initTime.getTime()) / 1000;
+			elapsedTime = (new Date().getTime() - initTime.getTime()) / 1000.0;
 			System.out.println(TOTAL_TASKS + " tareas servidas en " + elapsedTime + " segundos.");
 			tasksManager1.interrupt();
 			tasksManager2.interrupt();
-			loger.stop(elapsedTime);
+			loger.interrupt();
 			transitionLogger.interrupt();
-			autoloopResolver1.interrupt();
-			autoloopResolver2.interrupt();
 			consumePendingFlag1.interrupt();
 			consumePendingFlag2.interrupt();
 			cpuStateManager1.interrupt();
@@ -102,6 +85,8 @@ public class Main {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
+		new TInvariantChecker().runScript();
 
 	}
 }

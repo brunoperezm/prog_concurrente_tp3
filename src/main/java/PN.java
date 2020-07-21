@@ -8,36 +8,32 @@ import java.util.List;
 
 public class PN {
 	private final Array2DRowRealMatrix mIncidenceMatrix;
+	private final Array2DRowRealMatrix mForwardsIncidenceMatrix;
+	private final Array2DRowRealMatrix mBackwardsIncidenceMatrix;
 	private final Array2DRowRealMatrix mInhibitionMatrix;
 
 	private Array2DRowRealMatrix mMarking;
 
 	private final PInvariants[] invariants;
 	private final boolean checkInvariants;
-	private boolean verbose;
+	private boolean verbose = true;
 
 	public enum Transitions {
-		ARRIVAL_RATE(Main.ARRIVAL_RATE_1_ALFA, Main.ARRIVAL_RATE_1_BETA), // arrival_rate h
-		START_SERVICE_1(), // T2 h
-		END_SERVICE_RATE_1(Main.SERVICE_RATE_1_ALFA, Main.SERVICE_RATE_1_BETA), // service_rate h
-		START_SERVICE_2(), // T2 h
-		END_SERVICE_RATE_2(Main.SERVICE_RATE_2_ALFA, Main.SERVICE_RATE_2_BETA), // service_rate h
-		CONSUME_PENDING_TASK_TOKEN_1(), // T5 h
-		POWER_DOWN_THRESHOLD_1(), // power_down_threshold h
-		POWER_UP_DELAY_1(), // power_up_delay h
-        RETURN_PENDING_TASK_1(),
-		START_BUFFER_1(), // T1 h
-		WAKE_UP_1(), // T6 h
-		POWER_UP_DELAY_2(), // power_up_delay h
-		CONSUME_PENDING_TASK_TOKEN_2(), // T5 h
-		POWER_DOWN_THRESHOLD_2(), // power_down_threshold h
-		RETURN_PENDING_TASK_2(),
-		START_BUFFER_2(), // T1 h
-		WAKE_UP_2(), // T6 h
-		ZT19(), // ZT17 h
-		ZT20,
-		ZT17(), // ZT17 h
-		ZT18(); // ZT17 h
+		ARRIVAL_RATE(Main.ARRIVAL_RATE_1_ALFA, Main.ARRIVAL_RATE_1_BETA),
+		CONSUME_PENDING_TASK_TOKEN_1,
+		CONSUME_PENDING_TASK_TOKEN_2,
+		END_SERVICE_RATE_1(Main.SERVICE_RATE_1_ALFA, Main.SERVICE_RATE_1_BETA),
+		END_SERVICE_RATE_2(Main.SERVICE_RATE_2_ALFA, Main.SERVICE_RATE_2_BETA),
+		POWER_DOWN_THRESHOLD_1,
+		POWER_DOWN_THRESHOLD_2,
+		POWER_UP_DELAY_1,
+		POWER_UP_DELAY_2,
+		START_BUFFER_1,
+		START_BUFFER_2,
+		START_SERVICE_1,
+		START_SERVICE_2,
+		WAKE_UP_1,
+		WAKE_UP_2;
 
 		private Integer alfa;
 		private Integer beta;
@@ -71,33 +67,26 @@ public class PN {
 		}
 	}
 	enum Places {
-		c1_idle(0),
-		c2_idle(1),
-		Buffer1(2),
-		core1_active(3),
-		Buffer2(4),
-		core2_active(5),
-		CPU1_ON(6),
-		CPU1_PowerUp(7),
-		CPU1_StandBy(8),
-		CPU2_ON(9),
-		CPU2_PowerUp(10),
-		CPU2_StandBy(11),
-		P0(12),
-		P1(13),
-		P20(16),
-		P21(17),
+		C1_IDLE,
+		C2_IDLE,
+		CORE1_BUFFER,
+		CORE1_ACTIVE,
+		CORE2_BUFFER,
+		CORE2_ACTIVE,
+		CPU1_ON,
+		CPU1_POWER_UP,
+		CPU1_STAND_BY,
+		CPU2_ON,
+		CPU2_POWER_UP,
+		CPU2_STAND_BY,
+		P0,
+		P1,
+		P6,
+		P8;
 
-		Z18(20),
-		ZP19(21);
-
-		final int position;
-		Places (int position) {
-			this.position = position;
-		}
 
 		public int getPosition() {
-			return position;
+			return ordinal();
 		}
 	}
 
@@ -123,68 +112,77 @@ public class PN {
 	}
 
 	PN(boolean checkInvariants) {
-		double[] initialMarking = {1,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0};
+		double[] initialMarking = {1,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0};
 		mMarking = new Array2DRowRealMatrix(initialMarking);
 
 		this.invariants = new PInvariants[]{
 				new PInvariants(1, Places.P0, Places.P1),
-				new PInvariants(1, Places.c1_idle, Places.core1_active),
-				new PInvariants(1, Places.c2_idle, Places.core2_active),
-				new PInvariants(1, Places.CPU1_ON, Places.CPU1_PowerUp, Places.CPU1_StandBy, Places.Z18, Places.P20),
-				new PInvariants(1, Places.CPU2_ON, Places.CPU2_PowerUp, Places.CPU2_StandBy, Places.ZP19, Places.P21),
+				new PInvariants(1, Places.C1_IDLE, Places.CORE1_ACTIVE),
+				new PInvariants(1, Places.C2_IDLE, Places.CORE2_ACTIVE),
+				new PInvariants(1, Places.CPU1_ON, Places.CPU1_POWER_UP, Places.CPU1_STAND_BY),
+				new PInvariants(1, Places.CPU2_ON, Places.CPU2_POWER_UP, Places.CPU2_STAND_BY),
 		};
 		this.checkInvariants = checkInvariants;
 
-		double[][] incidenceMatrix = {
-				{0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // c1-Idle
-				{0,0,0,-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // c2-Idle
-				{0,-1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0}, // core1_buffer
-				{0,1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // core1-active
-				{0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0}, // core2_buffer
-				{0,0,0,1,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // core2-active
-				{0,-1,0,0,0,-1,-1,1,0,0,0,0,0,0,0,0,0,1,0,1,0}, // CPU1_ON
-				{0,0,0,0,0,0,0,-1,0,0,1,0,0,0,0,0,0,0,0,0,0}, // CPU1-Power_up
-				{0,0,0,0,0,0,1,0,0,0,-1,0,0,0,0,0,0,0,0,0,0}, // CPU1-Stand_by
-				{0,0,0,-1,0,0,0,0,0,0,0,1,-1,-1,0,0,0,0,1,0,1}, // CPU2_ON
-				{0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,1,0,0,0,0}, // CPU2-Power_up
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,-1,0,0,0,0}, // CPU2-Stand_by
-				{-1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0}, // P0
-				{1,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,-1,0,0,0,0,0}, // P1
-				{0,0,0,0,0,0,0,0,-1,0,1,0,0,0,0,0,0,0,0,0,0}, // P16
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,1,0,0,0,0}, // P17
-				{0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0}, // P20
-				{0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0}, // P21
-				{0,0,0,0,0,-1,0,-1,1,1,-1,0,0,0,0,0,0,0,0,0,0}, // P6
-				{0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,1,1,-1,0,0,0,0}, // P8
-				{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0}, // Z18
-				{0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,-1}, // ZP19
+		double[][] forwardsIncidenceMatrix = {
+			{0,0,0,1,0,0,0,0,0,0,0,0,0,0,0}, // C1_IDLE
+			{0,0,0,0,1,0,0,0,0,0,0,0,0,0,0}, // C2_IDLE
+			{0,0,0,0,0,0,0,0,0,1,0,0,0,0,0}, // CORE1_BUFFER
+			{0,0,0,0,0,0,0,0,0,0,0,1,0,0,0}, // CORE1_ACTIVE
+			{0,0,0,0,0,0,0,0,0,0,1,0,0,0,0}, // CORE2_BUFFER
+			{0,0,0,0,0,0,0,0,0,0,0,0,1,0,0}, // CORE2_ACTIVE
+			{0,1,0,0,0,0,0,1,0,0,0,1,0,0,0}, // CPU1_ON
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,1,0}, // CPU1_POWER_UP
+			{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0}, // CPU1_STAND_BY
+			{0,0,1,0,0,0,0,0,1,0,0,0,1,0,0}, // CPU2_ON
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}, // CPU2_POWER_UP
+			{0,0,0,0,0,0,1,0,0,0,0,0,0,0,0}, // CPU2_STAND_BY
+			{0,0,0,0,0,0,0,0,0,1,1,0,0,0,0}, // P0
+			{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P1
+			{0,0,0,0,0,0,0,0,0,1,0,0,0,1,0}, // P6
+			{0,0,0,0,0,0,0,0,0,0,1,0,0,0,1}  // P8
+		};
+		double[][] backwardsIncidenceMatrix = {
+			{0,0,0,0,0,0,0,0,0,0,0,1,0,0,0}, // C1_IDLE
+			{0,0,0,0,0,0,0,0,0,0,0,0,1,0,0}, // C2_IDLE
+			{0,0,0,0,0,0,0,0,0,0,0,1,0,0,0}, // CORE1_BUFFER
+			{0,0,0,1,0,0,0,0,0,0,0,0,0,0,0}, // CORE1_ACTIVE
+			{0,0,0,0,0,0,0,0,0,0,0,0,1,0,0}, // CORE2_BUFFER
+			{0,0,0,0,1,0,0,0,0,0,0,0,0,0,0}, // CORE2_ACTIVE
+			{0,1,0,0,0,1,0,0,0,0,0,1,0,0,0}, // CPU1_ON
+			{0,0,0,0,0,0,0,1,0,0,0,0,0,0,0}, // CPU1_POWER_UP
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,1,0}, // CPU1_STAND_BY
+			{0,0,1,0,0,0,1,0,0,0,0,0,1,0,0}, // CPU2_ON
+			{0,0,0,0,0,0,0,0,1,0,0,0,0,0,0}, // CPU2_POWER_UP
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}, // CPU2_STAND_BY
+			{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P0
+			{0,0,0,0,0,0,0,0,0,1,1,0,0,0,0}, // P1
+			{0,1,0,0,0,0,0,1,0,0,0,0,0,1,0}, // P6
+			{0,0,1,0,0,0,0,0,1,0,0,0,0,0,1}  // P8
 		};
 		double[][] inhibitionMatrix = {
-				// Arrival_rate, c1-Service_rate, c2-Service_rate, CPU1-Power_down_threshold, CPU1-Power_up_delay, CPU2_power_up_delay, CPU2-Power_down_threshold, T1, T2, T3, T4, T5, CPU1-WakeUp, T7, T8
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // c1-Idle
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // c2-Idle
-				{0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // core1_buffer
-				{0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // core1-active
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0}, // core2_buffer
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0}, // core2-active
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU1_ON
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU1-Power_up
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU1-Stand_by
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU2_ON
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU2-Power_up
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU2-Stand_by
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P0
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P1
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P16
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P17
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P20
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P21
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P6
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P8
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // Z18
-				{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // ZP19
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // c1-Idle
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // c2-Idle
+			{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0}, // core1_buffer
+			{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0}, // core1-active
+			{0,0,0,0,0,0,1,0,0,0,0,0,0,0,0}, // core2_buffer
+			{0,0,0,0,0,0,1,0,0,0,0,0,0,0,0}, // core2-active
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU1_ON
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU1-Power_up
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU1-Stand_by
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU2_ON
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU2-Power_up
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // CPU2-Stand_by
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P0
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P1
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // P6
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}  // P8
 		};
-		mIncidenceMatrix = new Array2DRowRealMatrix(incidenceMatrix);
+
+		mForwardsIncidenceMatrix = new Array2DRowRealMatrix(forwardsIncidenceMatrix);
+		mBackwardsIncidenceMatrix = new Array2DRowRealMatrix(backwardsIncidenceMatrix);
+
+		mIncidenceMatrix = mForwardsIncidenceMatrix.subtract(mBackwardsIncidenceMatrix);
 		mInhibitionMatrix = new Array2DRowRealMatrix(inhibitionMatrix);
 		initInternalCounters();
 		System.out.println("Comenzando RdP...");
@@ -198,7 +196,8 @@ public class PN {
 		if(transition.isTemporized()) transition.setInitialTime(null);
 		initInternalCounters();
 		assert checkPInvariant();
-		if (verbose) System.out.println(transition+",");
+		//if (verbose) System.out.println("Marcado desp.: " + getMarkingString() + sdf.format(new Date()) + ", " + transition.toString());
+		//if (verbose) System.out.println("-------------------------------");
 	}
 
 	private boolean checkPInvariant() {
@@ -224,7 +223,7 @@ public class PN {
 	 * 		   the (negative) remaining millis for timed transition to be enabled*/
 	int isTransitionEnabled(Transitions transition) {
 		Array2DRowRealMatrix matrix =
-				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
+				mMarking.subtract(new Array2DRowRealMatrix(mBackwardsIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		for (int i = 0; i<matrix.getRowDimension(); i++) {
 			if (matrix.getRow(i)[0] < 0)  {
 				return 0;
@@ -259,7 +258,7 @@ public class PN {
 
 	private boolean isTransitionEnabledWithoutTime(Transitions transition) {
 		Array2DRowRealMatrix matrix =
-				mMarking.add(new Array2DRowRealMatrix(mIncidenceMatrix.getColumn(transition.getTransitionCode())));
+				mMarking.subtract(new Array2DRowRealMatrix(mBackwardsIncidenceMatrix.getColumn(transition.getTransitionCode())));
 		for (int i = 0; i<matrix.getRowDimension(); i++) {
 			if (matrix.getRow(i)[0] < 0) return false;
 		}

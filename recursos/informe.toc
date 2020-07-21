@@ -1,0 +1,18 @@
+\babel@toc {spanish}{}
+\contentsline {section}{\numberline {1}Consigna}{2}% 
+\contentsline {section}{\numberline {2}Red de petri resultante}{2}% 
+\contentsline {section}{\numberline {3}Dise\IeC {\~n}o}{3}% 
+\contentsline {subsection}{\numberline {3.1}Diagrama de clases}{3}% 
+\contentsline {subsection}{\numberline {3.2}PN (red de petri)}{4}% 
+\contentsline {subsection}{\numberline {3.3}Monitor}{4}% 
+\contentsline {subsection}{\numberline {3.4}Hilos que manejan la RdP}{5}% 
+\contentsline {subsection}{\numberline {3.5}Loggers}{5}% 
+\contentsline {subsection}{\numberline {3.6}Policy}{5}% 
+\contentsline {section}{\numberline {4}Implementaci\IeC {\'o}n}{5}% 
+\contentsline {subsection}{\numberline {4.1}Main}{5}% 
+\contentsline {subsubsection}{\numberline {4.1.1}Hilos disparadores de transiciones}{6}% 
+\contentsline {subsection}{\numberline {4.2}PN}{7}% 
+\contentsline {subsubsection}{\numberline {4.2.1}IsTransitionEnabled(t)}{7}% 
+\contentsline {subsection}{\numberline {4.3}Monitor}{8}% 
+\contentsline {subsubsection}{\numberline {4.3.1}Fire}{8}% 
+\contentsline {subsubsection}{\numberline {4.3.2}TaskDispatch}{9}% 

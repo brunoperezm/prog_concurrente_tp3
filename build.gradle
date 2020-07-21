@@ -1,12 +1,28 @@
 plugins {
     id 'java'
+    id 'de.fuerstenau.buildconfig' version '1.1.8'
+
 }
+apply plugin: 'idea'
+
 
 group 'projetctoConcurrenteTp3'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
+// BuildConfid es un plugin  https://github.com/mfuerstenau/gradle-buildconfig-plugin
+buildConfig {
+    clsName = 'BuildConfig'      // sets the name of the BuildConfig class
+    packageName = project.group  // sets the package of the BuildConfig class,
+    charset = 'UTF-8'            // sets charset of the generated class,
 
+    // CustomVariables
+    appName = project.name
+    version = project.version
+    buildConfigField 'String', 'projectDir', "hola"
+}
 repositories {
     mavenCentral()
 }
